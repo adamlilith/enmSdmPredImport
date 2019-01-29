@@ -29,4 +29,5 @@ Imports:
 	scales,
 	sp,
 	statisfactory
-Suggests:	
+Suggests: 
+RoxygenNote: 6.1.1
