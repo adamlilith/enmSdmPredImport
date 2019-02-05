@@ -4,16 +4,23 @@
 \alias{loadEvals}
 \title{Load evaluation files and compile into a single data frame}
 \usage{
-loadEvals(outDir, algos = c("omniscient", "brt", "gam", "maxent"))
+loadEvals(scenarioDir, algos = c("omniscient", "gam", "maxent", "brt"),
+  save = TRUE, redo = FALSE, verbose = TRUE)
 }
 \arguments{
-\item{outDir}{Character, name of the \emph{scenario} directory in which a folder named "evaluations" is found containing evaluation files.}
+\item{scenarioDir}{Character, name of the \emph{scenario} directory in which a folder named "evaluations" is found containing evaluation files.}
 
-\item{algos}{Character, name of algorithm(s) for which to collate evaluation files. Examples: \code{c('omniscient', 'brt', 'gam', 'maxent')}.}
+\item{algos}{Character, name of algorithm(s) for which to collate evaluation files. Examples: \code{c('omniscient', 'brt', 'gam', 'maxent')}. Algorithms will appear in this order in the data frame output.}
+
+\item{save}{Logical, if \code{TRUE} then save collated data frame in the evaluation folder. The name of the file will be "!Collated Evaluations.RData".}
+
+\item{redo}{Logical, if \code{TRUE} and a file named "!Collated Evaluations.RData" is already in the evaluations folder, then this function will load that file instead of re-collating individual evaluation files. If \code{FALSE}, then re-collate evaluation files.}
+
+\item{verbose}{Logical, if \code{TRUE} then display progress.}
 }
 \value{
 Data frame.
 }
 \description{
-This is a helper function that loads multiple evaluation files and compiles them into a single data frame.
+This is a helper function that loads multiple evaluation files and compiles them into a single data frame. The data frame is then sorted by the order of the algorithms in the argument \code{algo}.
 }
