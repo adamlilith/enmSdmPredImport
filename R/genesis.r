@@ -195,7 +195,7 @@ genesis <- function(
 			}
 		
 			# rotate raster
-			if (any(names(geography[[i]])=='rot')) if (!is.na(geography[[i]]$rot)) mat <- omnibus::rotMatrix(x=mat, rot=geography[[i]]$rot)
+			if (any(names(geography[[i]])=='rot')) if (!is.na(geography[[i]]$rot)) mat <- omnibus::rotateMatrix(x=mat, rot=geography[[i]]$rot)
 		
 			# random orientation for rasters of "linear-ish" type
 			if (any(names(geography[[i]])=='randOrient')) if (!is.na(geography[[i]]$randOrient)) {
