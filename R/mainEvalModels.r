@@ -53,7 +53,8 @@ mainEvalModels <- function(
 	
 	omnibus::dirCreate(evalDir)
 	
-	# by ALGORITHM
+	### by ALGORITHM
+	################
 	for (algo in algos) {
 	
 		if (verbose > 0) omnibus::say('Evaluating ', paste(toupper(type), collapse=' '), ' ', toupper(algo), ' models:', post=0)
@@ -71,7 +72,9 @@ mainEvalModels <- function(
 			# output data frame for this algorithm
 			perform <- data.frame()
 		
-			# by ITERATION
+			### by ITERATION
+			################
+			
 			for (iter in iters) {
 		
 				omnibus::say(iter, post=0)
@@ -141,7 +144,7 @@ mainEvalModels <- function(
 					load(paste0(modelDir, '/multivariate ', algo, '/', algo, fileAppendStartSpace, ' model ', prefix(iter, 3), '.Rdata'))
 					
 					numTrainBg <- if (algo != 'maxent') {
-						if (exists('stats', where=model$stats, inherits=FALSE)) {
+						if (exists('stats', where=model, inherits=FALSE)) {
 							model$stats$numTrainBg
 						} else {
 							sim$stats$numBg
@@ -158,9 +161,9 @@ mainEvalModels <- function(
 					if (class(model) != 'logical') {
 						
 						# compute observed predictions
-						predPres <- enmSdmPredImport::predictModel(model, testPres, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
-						predAbs <- enmSdmPredImport::predictModel(model, testAbs, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
-						predBg <- enmSdmPredImport::predictModel(model, testBg, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
+						predPres <- predictModel(model, testPres, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
+						predAbs <- predictModel(model, testAbs, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
+						predBg <- predictModel(model, testBg, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
 
 						### OBSERVED: stratified sampling of background
 						###############################################
@@ -194,7 +197,7 @@ mainEvalModels <- function(
 						} # if doing stratified evaluation
 						
 						### OBSERVED PERFORMANCE
-						######################
+						########################
 						
 						aucPresAbs <- enmSdm::aucWeighted(pres=predPres, bg=predAbs, na.rm=TRUE)
 						aucPresBg <- enmSdm::aucWeighted(pres=predPres, bg=predBg, na.rm=TRUE)

@@ -9,14 +9,16 @@
 
 predictModel <- function(model, data, ...) {
 
+	modelClass <- class(model)
+
 	### omniscient model
 	####################
 
-	pred <- if (nrow(data) == 0 | 'logical' %in% class(model)) {
+	pred <- if (nrow(data) == 0 | 'logical' %in% modelClass) {
 
 		rep(NA, nrow(data))
 	
-	} else if ('function' %in% class(model)) {
+	} else if ('function' %in% modelClass) {
 	
 		### full model
 		if (attr(model, 'modelType')=='full') {
@@ -89,11 +91,24 @@ predictModel <- function(model, data, ...) {
 	
 	### Maxent models
 	#################
-	} else if ('MaxEnt' %in% class(model)) {
+	} else if ('MaxEnt' %in% modelClass) {
 	
-		predictMaxEnt(x=model,
+		enmSdm::predictMaxEnt(x=model,
 			data=data,
-			type = 'cloglog',
+			type='cloglog',
+			...
+		)
+	
+	### BRTs
+	###################
+	} else if ('gbm' %in% modelClass) {
+	
+		gbm::predict.gbm(
+			model,
+			data,
+			n.trees=model$gbm.call$best.trees,
+			response=TRUE,
+			na.rm=TRUE,
 			...
 		)
 	
@@ -105,8 +120,7 @@ predictModel <- function(model, data, ...) {
 			object=model,
 			x=data,
 			newdata=data,
-			n.trees=model$gbm.call$best.trees,
-			type=ifelse('randomForest' %in% class(model), 'prob', 'response'),
+			type=ifelse('randomForest' %in% modelClass, 'prob', 'response'),
 			response=TRUE,
 			na.rm=TRUE,
 			...
@@ -114,7 +128,7 @@ predictModel <- function(model, data, ...) {
 	
 	}
 
-	if ('randomForest' %in% class(model)) pred <- pred[ , 2]
+	if ('randomForest' %in% modelClass) pred <- pred[ , 2]
 	pred
 	
 }

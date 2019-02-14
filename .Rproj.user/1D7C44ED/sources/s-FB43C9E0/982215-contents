@@ -22,6 +22,7 @@ Imports:
 	compiler,
 	dismo,
 	enmSdm,
+	gbm,
 	omnibus,
 	raster,
 	rgdal,
