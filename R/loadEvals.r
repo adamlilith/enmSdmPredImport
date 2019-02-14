@@ -1,7 +1,7 @@
 #' Load evaluation files and compile into a single data frame
 #'
 #' This is a helper function that loads multiple evaluation files and compiles them into a single data frame. The data frame is then sorted by the order of the algorithms in the argument \code{algo}.
-#' @param scenarioDir Character, name of the \emph{scenario} directory in which a folder named "evaluations" is found containing evaluation files.
+#' @param evalDir Character, name of the \emph{scenario} directory in which a folder named "evaluations" is found containing evaluation files.
 #' @param algos Character, name of algorithm(s) for which to collate evaluation files. Examples: \code{c('omniscient', 'brt', 'gam', 'maxent')}. Algorithms will appear in this order in the data frame output.
 #' @param save Logical, if \code{TRUE} then save collated data frame in the evaluation folder. The name of the file will be "!Collated Evaluations.RData".
 #' @param redo Logical, if \code{TRUE} and a file named "!Collated Evaluations.RData" is already in the evaluations folder, then this function will load that file instead of re-collating individual evaluation files. If \code{FALSE}, then re-collate evaluation files.
@@ -9,20 +9,20 @@
 #' @return Data frame.
 #' @export
 
-loadEvals <- function(scenarioDir, algos=c('omniscient', 'gam', 'maxent', 'brt'), save=TRUE, redo=FALSE, verbose=TRUE) {
+loadEvals <- function(evalDir, algos=c('omniscient', 'gam', 'maxent', 'brt'), save=TRUE, redo=FALSE, verbose=TRUE) {
 
 	# loads evaluation files and compiles them into a single data frame
 
-	if (!redo & file.exists(paste0(scenarioDir, '/evaluations/!Collated Evaluations.RData'))) {
+	if (!redo & file.exists(paste0(evalDir, '/evaluations/!Collated Evaluations.RData'))) {
 	
-		load(paste0(scenarioDir, '/evaluations/!Collated Evaluations.RData'))
+		load(paste0(evalDir, '/evaluations/!Collated Evaluations.RData'))
 		
 	} else {
 		
 		for (algo in algos) {
 
 			omnibus::say(algo)
-			files <- listFiles(paste0(scenarioDir, '/evaluations'), pattern=toupper(algo))
+			files <- listFiles(paste0(evalDir, '/evaluations'), pattern=toupper(algo))
 
 			for (file in files) {
 
@@ -50,7 +50,7 @@ loadEvals <- function(scenarioDir, algos=c('omniscient', 'gam', 'maxent', 'brt')
 		}
 		master <- master[order(ranks), ]
 
-		if (save) save(master, file=paste0(scenarioDir, '/evaluations/!Collated Evaluations.RData'))
+		if (save) save(master, file=paste0(evalDir, '/evaluations/!Collated Evaluations.RData'))
 		
 	}
 		

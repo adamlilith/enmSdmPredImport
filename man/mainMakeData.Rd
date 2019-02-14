@@ -4,18 +4,18 @@
 \alias{mainMakeData}
 \title{Master function to create common sets of data for simulations}
 \usage{
-mainMakeData(geography, response, scenarioDir, numTrainPres = 200,
+mainMakeData(geography, response, simDir, numTrainPres = 200,
   numTestPres = 200, numBg = 10000, iters = 1:100, circle = FALSE,
-  size = 1001, fileAppend = NULL, b0 = NA, b1 = NA, b2 = NA,
+  size = 1001, filePrepend = NULL, b0 = NA, b1 = NA, b2 = NA,
   b11 = NA, b12 = NA, mu1 = NA, sigma1 = NA, sigma2 = NA,
-  rho = NA, overwrite = FALSE, verbose = 1, ...)
+  rho = NA, overwrite = TRUE, verbose = 1, ...)
 }
 \arguments{
 \item{geography}{A list of lists describing the simulated environmental layers.  Each sublist pertains to one later. See \code{\link[enmSdmPredImport]{genesis}} for details.}
 
 \item{response}{A function describing the response of the species to the environment. This must be one of: \code{\link[enmSdmPredImport]{logistic}}, \code{\link[enmSdmPredImport]{logisticShift}}, or \code{\link[enmSdmPredImport]{gaussian}}.}
 
-\item{scenarioDir}{Path name of scenario directory. A folder named "!scenario data" will be created within this directory and one file per iteration stored within.}
+\item{simDir}{Character, path name of directory in which scenario data files are saved.}
 
 \item{numTrainPres}{Positive integer, number of training presences to locate.}
 
@@ -29,7 +29,7 @@ mainMakeData(geography, response, scenarioDir, numTrainPres = 200,
 
 \item{size}{Positive integer, size of landscape in number of cells on a side.}
 
-\item{fileAppend}{Either \code{NULL} or a character string. If a character string then this is appended to the file name. if \code{NULL} (default), nothing is appended. File names will be as "sim XXX.RData" or sim XXX APPEND.RData" where "XXX" is the iteration number and APPEND the string in \code{fileAppend}.}
+\item{filePrepend}{Either \code{NULL} or a character string. If a character string then this is pre-pended to the simulated data file name. If \code{NULL} (default), nothing is appended. File names will be as "sim XXX.RData" (no append) or "PREPEND sim XXX.RData" where "XXX" is the iteration number and PREPEND the string in \code{filePrepend}.}
 
 \item{b0}{Numeric, parameters for \code{\link[enmSdmPredImport]{logistic}} or \code{\link[enmSdmPredImport]{logisticShift}} function specified in the \code{response} argument (above). Logistic intercept. Default is \code{NA}.}
 
@@ -49,7 +49,7 @@ mainMakeData(geography, response, scenarioDir, numTrainPres = 200,
 
 \item{rho}{Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Covariance term. Default is \code{NA}.}
 
-\item{overwrite}{Logical, if \code{TRUE} then save over pre-existing data files. Default is \code{FALSE}.}
+\item{overwrite}{Logical, if \code{TRUE} (default) then save over pre-existing data files.}
 
 \item{verbose}{Numeric, if 0 then show minimal output, 1 more output, 2 even more, >2 all of it.}
 

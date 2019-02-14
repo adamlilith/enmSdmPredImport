@@ -3,14 +3,14 @@
 #' This function is typically used to create multiple simulated data sets for further analysis. The data sets represent data that one would typically possess in for applications of species distribution models (i.e., training and test presences, test absences and background sites). Typical implementation is to use \code{mainMakeData} to create simulated data sets, then \code{mainTrainModels} to train SDMs on those data sets, then \code{mainEvalModels} to evaluate the models.
 #' @param geography A list of lists describing the simulated environmental layers.  Each sublist pertains to one later. See \code{\link[enmSdmPredImport]{genesis}} for details.
 #' @param response A function describing the response of the species to the environment. This must be one of: \code{\link[enmSdmPredImport]{logistic}}, \code{\link[enmSdmPredImport]{logisticShift}}, or \code{\link[enmSdmPredImport]{gaussian}}.
-#' @param scenarioDir Path name of scenario directory. A folder named "!scenario data" will be created within this directory and one file per iteration stored within.
+#' @param simDir Character, path name of directory in which scenario data files are saved.
 #' @param numTrainPres Positive integer, number of training presences to locate.
 #' @param numTestPres Positive integer, number of test presences to locate. The number of test absences will also be equal to this value.
 #' @param numBg Positive integer, number of training and number of test background sites to locate.
 #' @param iters Vector of positive integers, data iterations to generate.
 #' @param circle Logical, if \code{FALSE} (default), all landscapes are square. If \code{TRUE} then landscapes are circular.
 #' @param size Positive integer, size of landscape in number of cells on a side.
-#' @param fileAppend Either \code{NULL} or a character string. If a character string then this is appended to the file name. if \code{NULL} (default), nothing is appended. File names will be as "sim XXX.RData" or sim XXX APPEND.RData" where "XXX" is the iteration number and APPEND the string in \code{fileAppend}.
+#' @param filePrepend Either \code{NULL} or a character string. If a character string then this is pre-pended to the simulated data file name. If \code{NULL} (default), nothing is appended. File names will be as "sim XXX.RData" (no append) or "PREPEND sim XXX.RData" where "XXX" is the iteration number and PREPEND the string in \code{filePrepend}.
 #' @param b0 Numeric, parameters for \code{\link[enmSdmPredImport]{logistic}} or \code{\link[enmSdmPredImport]{logisticShift}} function specified in the \code{response} argument (above). Logistic intercept. Default is \code{NA}.
 #' @param b1 Numeric, parameters for \code{\link[enmSdmPredImport]{logistic}} or \code{\link[enmSdmPredImport]{logisticShift}} function specified in the \code{response} argument (above). Logistic slope. Default is \code{NA}.
 #' @param b2 Numeric, parameters for \code{\link[enmSdmPredImport]{logistic}} or \code{\link[enmSdmPredImport]{logisticShift}} function specified in the \code{response} argument (above). Logistic slope. Default is c.
@@ -21,7 +21,7 @@
 #' @param sigma1 Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Standard deviation of variable. Default is \code{NA}.
 #' @param sigma2 Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Standard deviation of variable. Default is \code{NA}.
 #' @param rho Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Covariance term. Default is \code{NA}.
-#' @param overwrite Logical, if \code{TRUE} then save over pre-existing data files. Default is \code{FALSE}.
+#' @param overwrite Logical, if \code{TRUE} (default) then save over pre-existing data files.
 #' @param verbose Numeric, if 0 then show minimal output, 1 more output, 2 even more, >2 all of it.
 #' @param Other arguments (unused).
 #' @return Nothing (saves data files to disc in a subdirectory of the scenario directory named "!scenario data").
@@ -31,16 +31,16 @@
 mainMakeData <- function(
 	geography,
 	response,
-	scenarioDir,
+	simDir,
 	numTrainPres=200,
 	numTestPres=200,
 	numBg=10000,
 	iters=1:100,
 	circle=FALSE,
 	size=1001,
-	fileAppend=NULL,
+	filePrepend=NULL,
 	b0=NA, b1=NA, b2=NA, b11=NA, b12=NA, mu1=NA, sigma1=NA, sigma2=NA, rho=NA,
-	overwrite=FALSE,
+	overwrite=TRUE,
 	verbose=1,
 	...
 ) {
@@ -48,8 +48,8 @@ mainMakeData <- function(
 	if (verbose >= 0) omnibus::say('Creating simulation data for ', max(iters), ' simulations:', post=0)
 
 	# file prefix
-	fileAppendStartSpace <- if (!is.null(fileAppend)) { paste0(' ', fileAppend) } else { '' }
-	fileAppendEndSpace <- if (!is.null(fileAppend)) { paste0(fileAppend, ' ') } else { '' }
+	# fileAppendStartSpace <- if (!is.null(filePrepend)) { paste0(' ', filePrepend) } else { '' }
+	filePrependEndSpace <- if (!is.null(filePrepend)) { paste0(filePrepend, ' ') } else { '' }
 
 	# flag to indicate if any data creation iterations were skipped
 	skippedAny <- FALSE
@@ -58,7 +58,7 @@ mainMakeData <- function(
 	for (iter in iters) {
 
 		# DO NOT re-create data
-		if (!overwrite && file.exists(paste0(scenarioDir, '/!scenario data/', fileAppendEndSpace, 'sim ', prefix(iter, 3), '.Rdata'))) {
+		if (!overwrite && file.exists(paste0(simDir, '/', filePrependEndSpace, 'sim ', prefix(iter, 3), '.Rdata'))) {
 
 			omnibus::say(iter, '\U2713', post=0)
 			skippedAny <- TRUE
@@ -89,20 +89,21 @@ mainMakeData <- function(
 				}
 					
 				speciesMap <- do.call(response, args=args)
-				# speciesMap <- eval(parse(text=as.character(species)), envir=1)
 
-				dirCreate(scenarioDir, '/maps')
-				png(paste0(scenarioDir, '/maps/map', fileAppendStartSpace, '.png'), width=1200, height=1200)
-					names(speciesMap) <- 'species'
-					plot(stack(speciesMap, landscape))
-				dev.off()
+				# omnibus::dirCreate(simDir, '/maps')
+				# png(paste0(simDir, '/maps/map', fileAppendStartSpace, '.png'), width=1200, height=1200)
+					# names(speciesMap) <- 'species'
+					# plot(stack(speciesMap, landscape))
+				# dev.off()
 
 			# re-make any random layers for next sim
 			} else if (any(unlist(geography) %in% 'random')) {
 				landscape <<- genesis(geography, circle=circle, size=size)
-				speciesMap <- eval(parse(text=as.character(species)), envir=1)
+				# speciesMap <- eval(parse(text=as.character(species)), envir=1)
+				speciesMap <- do.call(response, args=args)
 			} else if (!exists('speciesMap', inherits=FALSE)) {
-				speciesMap <- eval(parse(text=as.character(species)), envir=1)
+				# speciesMap <- eval(parse(text=as.character(species)), envir=1)
+				speciesMap <- do.call(response, args=args)
 			}
 
 			### generate training/test and background sites
@@ -172,8 +173,8 @@ mainMakeData <- function(
 
 			class(sim) <- c('sim', class(sim))
 
-			dirCreate(scenarioDir, '/!scenario data')
-			save(sim, file=paste0(scenarioDir, '/!scenario data/', fileAppendEndSpace, 'sim ', prefix(iter, 3), '.Rdata'))
+			omnibus::dirCreate(simDir)
+			save(sim, file=paste0(simDir, '/', filePrependEndSpace, 'sim ', prefix(iter, 3), '.Rdata'))
 			gc()
 
 		} # re-create data?
