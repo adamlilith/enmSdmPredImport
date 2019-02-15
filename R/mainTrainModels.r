@@ -162,7 +162,7 @@ mainTrainModels <- function(
 					}
 
 					if (!(algo %in% c('omniscient', 'maxent'))) {
-						model$stats$numTrainBg <- thisNumBg
+						if (!is.na(model)) model$stats$numTrainBg <- thisNumBg
 					}
 					
 					omnibus::dirCreate(modelDir, '/multivariate ', algo)
@@ -269,9 +269,11 @@ mainTrainModels <- function(
 							
 							names(model)[[count]] <- paste0('sans', vars[count])
 							
+							if (!(algo %in% c('omniscient', 'maxent'))) {
+								if (!is.na(model[[count]])) model[[count]]$stats$numTrainBg <- thisNumBg
+							}
+
 						} # next reduced model
-					
-						if (algo != 'maxent') model$stats$numTrainBg <- numBg
 					
 						dirCreate(modelDir, '/reduced ', algo)
 						fileName <- paste0(modelDir, '/reduced ', algo, '/', algo, fileAppendStartSpace, ' model ', prefix(iter, 3), '.Rdata')
@@ -386,10 +388,12 @@ mainTrainModels <- function(
 						
 						names(model)[[count]] <- paste0('only', vars[count])
 
+						if (!(algo %in% c('omniscient', 'maxent'))) {
+							if (!is.na(model[[count]])) model[[count]]$stats$numTrainBg <- thisNumBg
+						}
+
 					} # next univariate model
 
-					if (algo != 'maxent') model$stats$numTrainBg <- numBg
-					
 					dirCreate(modelDir, '/univariate ', algo)
 					fileName <- paste0(modelDir, '/univariate ', algo, '/', algo, ' ', fileAppendEndSpace, 'model ', prefix(iter, 3), '.RData')
 					save(model, file=fileName)

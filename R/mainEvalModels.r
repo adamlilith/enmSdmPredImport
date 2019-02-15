@@ -456,14 +456,16 @@ mainEvalModels <- function(
 					# load model
 					load(paste0(modelDir, '/reduced ', algo, '/', algo, fileAppendStartSpace, ' model ', prefix(iter, 3), '.Rdata'))
 					
-					numTrainBg <- if (algo != 'maxent') {
-						if (exists('stats', where=model$stats, inherits=FALSE)) {
-							model$stats$numTrainBg
+					numTrainBg <- if (!(algo %in% c('omniscient', 'maxent'))) {
+						if (exists('stats', where=model, inherits=FALSE)) {
+							model[[1]]$stats$numTrainBg
 						} else {
 							sim$stats$numBg
 						}
+					} else if (algo == 'maxent') {
+						nrow(model[[1]]@absence)
 					} else {
-						nrow(model@absence)
+						NA
 					}
 					
 					thisPerform$numTrainBg <- numTrainBg
@@ -516,20 +518,23 @@ mainEvalModels <- function(
 					# load model
 					load(paste0(modelDir, '/univariate ', algo, '/', algo, fileAppendStartSpace, ' model ', prefix(iter, 3), '.Rdata'))
 					
-					numTrainBg <- if (algo != 'maxent') {
-						if (exists('stats', where=model$stats, inherits=FALSE)) {
-							model$stats$numTrainBg
+					numTrainBg <- if (!(algo %in% c('omniscient', 'maxent'))) {
+						if (exists('stats', where=model, inherits=FALSE)) {
+							model[[1]]$stats$numTrainBg
 						} else {
 							sim$stats$numBg
 						}
+					} else if (algo == 'maxent') {
+						nrow(model[[1]]@absence)
 					} else {
-						nrow(model@absence)
+						NA
 					}
+					
+		print(numTrainBg)			
 					
 					thisPerform$numTrainBg <- numTrainBg
 
 					### OBSERVED: normal
-					
 					for (countVar in seq_along(model)) {
 
 						thisVar <- names(model)[[countVar]]
@@ -537,11 +542,11 @@ mainEvalModels <- function(
 						
 						# if model converged
 						if (class(model[[countVar]]) != 'logical') {
-						
+print(model[[countVar]])						
 							# compute observed predictions
-							predPres <- enmSdmPredImport::predictModel(model[[countVar]], testPres, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
-							predAbs <- enmSdmPredImport::predictModel(model[[countVar]], testAbs, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
-							predBg <- enmSdmPredImport::predictModel(model[[countVar]], testBg, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
+							predPres <- predictModel(model[[countVar]], testPres, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
+							predAbs <- predictModel(model[[countVar]], testAbs, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
+							predBg <- predictModel(model[[countVar]], testBg, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
 
 							# OBSERVED PERFORMANCE
 							aucPresAbs <- enmSdm::aucWeighted(pres=predPres, bg=predAbs, na.rm=TRUE)

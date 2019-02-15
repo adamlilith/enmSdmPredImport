@@ -11,24 +11,27 @@ predictModel <- function(model, data, ...) {
 
 	modelClass <- class(model)
 
-	### omniscient model
-	####################
-
+	### failed models
+	#################
+	
 	pred <- if (nrow(data) == 0 | 'logical' %in% modelClass) {
 
 		rep(NA, nrow(data))
 	
+	### omniscient model
+	####################
+
 	} else if ('function' %in% modelClass) {
 	
 		### full model
 		if (attr(model, 'modelType')=='full') {
-			
+
 			model(
 				x1=if (!any(grepl(names(data), pattern='T1'))) { rep (0, nrow(data)) } else { data[ , which(grepl(names(data), pattern='T1'))] },
 				x2=if (!any(grepl(names(data), pattern='T2'))) { rep (0, nrow(data)) } else { data[ , which(grepl(names(data), pattern='T2'))] },
 				...
 			)
-			
+
 		### reduced model
 		} else if (attr(model, 'modelType')=='reduced') {
 		
@@ -59,7 +62,7 @@ predictModel <- function(model, data, ...) {
 			}
 		
 		### univariate model
-		} else if (attr(model, 'modelType')=='univariate') {
+		} else if (attr(model, 'modelType') == 'univariate') {
 		
 			if (grepl(attr(model, 'univarWith'), pattern='T1')) {
 				
