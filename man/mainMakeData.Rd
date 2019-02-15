@@ -8,7 +8,7 @@ mainMakeData(geography, response, simDir, numTrainPres = 200,
   numTestPres = 200, numBg = 10000, iters = 1:100, circle = FALSE,
   size = 1001, filePrepend = NULL, b0 = NA, b1 = NA, b2 = NA,
   b11 = NA, b12 = NA, mu1 = NA, sigma1 = NA, sigma2 = NA,
-  rho = NA, overwrite = TRUE, verbose = 1, ...)
+  rho = NA, overwrite = FALSE, verbose = 1, ...)
 }
 \arguments{
 \item{geography}{A list of lists describing the simulated environmental layers.  Each sublist pertains to one later. See \code{\link[enmSdmPredImport]{genesis}} for details.}
@@ -49,7 +49,7 @@ mainMakeData(geography, response, simDir, numTrainPres = 200,
 
 \item{rho}{Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Covariance term. Default is \code{NA}.}
 
-\item{overwrite}{Logical, if \code{TRUE} (default) then save over pre-existing data files.}
+\item{overwrite}{Logical, if \code{TRUE} then save over pre-existing data files. Default is \code{FALSE}.}
 
 \item{verbose}{Numeric, if 0 then show minimal output, 1 more output, 2 even more, >2 all of it.}
 

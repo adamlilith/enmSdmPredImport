@@ -21,7 +21,7 @@
 #' @param sigma1 Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Standard deviation of variable. Default is \code{NA}.
 #' @param sigma2 Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Standard deviation of variable. Default is \code{NA}.
 #' @param rho Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Covariance term. Default is \code{NA}.
-#' @param overwrite Logical, if \code{TRUE} (default) then save over pre-existing data files.
+#' @param overwrite Logical, if \code{TRUE} then save over pre-existing data files. Default is \code{FALSE}.
 #' @param verbose Numeric, if 0 then show minimal output, 1 more output, 2 even more, >2 all of it.
 #' @param Other arguments (unused).
 #' @return Nothing (saves data files to disc in a subdirectory of the scenario directory named "!scenario data").
@@ -40,7 +40,7 @@ mainMakeData <- function(
 	size=1001,
 	filePrepend=NULL,
 	b0=NA, b1=NA, b2=NA, b11=NA, b12=NA, mu1=NA, sigma1=NA, sigma2=NA, rho=NA,
-	overwrite=TRUE,
+	overwrite=FALSE,
 	verbose=1,
 	...
 ) {
