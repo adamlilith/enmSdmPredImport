@@ -4,9 +4,9 @@
 \alias{mainMakeData}
 \title{Master function to create common sets of data for simulations}
 \usage{
-mainMakeData(geography, response, scenarioDir, numTrainPres = 200,
+mainMakeData(geography, response, simDir, numTrainPres = 200,
   numTestPres = 200, numBg = 10000, iters = 1:100, circle = FALSE,
-  size = 1001, fileAppend = NULL, b0 = NA, b1 = NA, b2 = NA,
+  size = 1001, filePrepend = NULL, b0 = NA, b1 = NA, b2 = NA,
   b11 = NA, b12 = NA, mu1 = NA, sigma1 = NA, sigma2 = NA,
   rho = NA, overwrite = FALSE, verbose = 1, ...)
 }
@@ -15,7 +15,7 @@ mainMakeData(geography, response, scenarioDir, numTrainPres = 200,
 
 \item{response}{A function describing the response of the species to the environment. This must be one of: \code{\link[enmSdmPredImport]{logistic}}, \code{\link[enmSdmPredImport]{logisticShift}}, or \code{\link[enmSdmPredImport]{gaussian}}.}
 
-\item{scenarioDir}{Path name of scenario directory. A folder named "!scenario data" will be created within this directory and one file per iteration stored within.}
+\item{simDir}{Character, path name of directory in which scenario data files are saved.}
 
 \item{numTrainPres}{Positive integer, number of training presences to locate.}
 
@@ -29,7 +29,7 @@ mainMakeData(geography, response, scenarioDir, numTrainPres = 200,
 
 \item{size}{Positive integer, size of landscape in number of cells on a side.}
 
-\item{fileAppend}{Either \code{NULL} or a character string. If a character string then this is appended to the file name. if \code{NULL} (default), nothing is appended. File names will be as "sim XXX.RData" or sim XXX APPEND.RData" where "XXX" is the iteration number and APPEND the string in \code{fileAppend}.}
+\item{filePrepend}{Either \code{NULL} or a character string. If a character string then this is pre-pended to the simulated data file name. If \code{NULL} (default), nothing is appended. File names will be as "sim XXX.RData" (no append) or "PREPEND sim XXX.RData" where "XXX" is the iteration number and PREPEND the string in \code{filePrepend}.}
 
 \item{b0}{Numeric, parameters for \code{\link[enmSdmPredImport]{logistic}} or \code{\link[enmSdmPredImport]{logisticShift}} function specified in the \code{response} argument (above). Logistic intercept. Default is \code{NA}.}
 

@@ -4,13 +4,16 @@
 \alias{mainTrainModels}
 \title{Train SDMs across multiple iterations of a scenario}
 \usage{
-mainTrainModels(scenarioDir, vars, algos = c("omniscient", "brt", "gam",
-  "glm", "maxent", "rf"), type = c("multivariate", "reduced",
-  "univariate"), iters = 1:100, fileAppend = NULL, overwrite = FALSE,
-  tempDir = raster::rasterOptions()$tmpdir, verbose = 1, ...)
+mainTrainModels(simDir, modelDir, vars, algos = c("omniscient", "brt",
+  "gam", "glm", "maxent", "rf"), type = c("multivariate", "reduced",
+  "univariate"), iters = 1:100, numBg = NULL, filePrepend = NULL,
+  overwrite = FALSE, tempDir = raster::rasterOptions()$tmpdir,
+  verbose = 1, ...)
 }
 \arguments{
-\item{scenarioDir}{Character, path name of scenario directory. Inside this must be a subfolder named "!scenario data" which is populated using the \code{mainMakeData} function.}
+\item{simDir}{Character, path name of directory in which scenario data files are saved.}
+
+\item{modelDir}{Character, path name of directory in which model files are saved. Depending on whether multivariate, reduced, and/or univariate models are trained, inside this folder will be subfolders named "multivariate", "reduced", and/or "univariate" followed by the name of the algorithm (e.g., "multivariate brt").}
 
 \item{vars}{Character vector, names of variables to use in model training. These should match the names in the \code{geography} argument supplied to the \code{mainMakeData} function. See \code{\link[enmSdmPredImport]{genesis}} function for more details on \code{geography}.}
 
@@ -20,7 +23,9 @@ mainTrainModels(scenarioDir, vars, algos = c("omniscient", "brt", "gam",
 
 \item{iters}{Vector of positive integers, data iterations to train models for.}
 
-\item{fileAppend}{Either \code{NULL} (append nothing) or a character string to be appended to the end of each model results file.}
+\item{numBg}{Positive integer, vector of positive integers, or \code{NULL}. This is the number of background sites to use when training the model. If this is \code{NULL} (default), then the number of background sites will be equal to the number of sites available in the "sim" object created by \code{mainMakeData}. If this is a single integer, then the background sites used for training will be taken from the first \code{numBg} sites available in the "sim" object. If this is a vector, then it must be the same length as \code{algos}, and each algorithm will then be presented with the respective number of background sites.}
+
+\item{filePrepend}{Either \code{NULL} or a character string. If a character string then this is \emph{pre}-pended to the simulated data file name and each model file name. If \code{NULL} (default), nothing is pre-pended. File names will be as "model XXX.RData" (no append) or "ALGORITHM PREPEND model XXX.RData" where "XXX" is the iteration number, "PREPEND" the string in \code{filePrepend}, and "ALGORITHM" the model algorithm name.}
 
 \item{overwrite}{Logical, if \code{TRUE} then overwrite existing model results files. Default is \code{FALSE}.}
 

@@ -4,11 +4,11 @@
 \alias{loadEvals}
 \title{Load evaluation files and compile into a single data frame}
 \usage{
-loadEvals(scenarioDir, algos = c("omniscient", "gam", "maxent", "brt"),
+loadEvals(evalDir, algos = c("omniscient", "gam", "maxent", "brt"),
   save = TRUE, redo = FALSE, verbose = TRUE)
 }
 \arguments{
-\item{scenarioDir}{Character, name of the \emph{scenario} directory in which a folder named "evaluations" is found containing evaluation files.}
+\item{evalDir}{Character, name of the \emph{scenario} directory in which a folder named "evaluations" is found containing evaluation files.}
 
 \item{algos}{Character, name of algorithm(s) for which to collate evaluation files. Examples: \code{c('omniscient', 'brt', 'gam', 'maxent')}. Algorithms will appear in this order in the data frame output.}
 
