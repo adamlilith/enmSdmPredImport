@@ -143,14 +143,16 @@ mainEvalModels <- function(
 					# load model
 					load(paste0(modelDir, '/multivariate ', algo, '/', algo, fileAppendStartSpace, ' model ', prefix(iter, 3), '.Rdata'))
 					
-					numTrainBg <- if (algo != 'maxent') {
+					numTrainBg <- if (!(algo %in% c('omniscient', 'maxent'))) {
 						if (exists('stats', where=model, inherits=FALSE)) {
 							model$stats$numTrainBg
 						} else {
 							sim$stats$numBg
 						}
-					} else {
+					} else if (algo == 'maxent') {
 						nrow(model@absence)
+					} else {
+						NA
 					}
 					
 					thisPerform$numTrainBg <- numTrainBg
