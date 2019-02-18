@@ -82,7 +82,7 @@ mainTrainModels <- function(
 			#############################
 			if ('multivariate' %in% type) {
 				
-				if (verbose > 0) { omnibus::say('| mv', post=0) }
+				if (verbose > 0) { omnibus::say('| multi', post=0) }
 				
 				# if overwriting models is OK, OR if model doesn't exist
 				fileMissing <- !file.exists(paste0(modelDir, '/multivariate ', algo, '/', algo, ' ', fileAppendEndSpace, 'model ', prefix(iter, 3), '.RData'))

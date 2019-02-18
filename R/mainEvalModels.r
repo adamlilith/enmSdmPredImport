@@ -82,6 +82,10 @@ mainEvalModels <- function(
 				# load simulation data
 				load(paste0(simDir, '/', fileAppendEndSpace, 'sim ', prefix(iter, 3), '.Rdata'))
 
+				# variable names
+				vars <- sim$vars
+
+				# remember statistics
 				testPres <- sim$testData$testPres
 				testAbs <- sim$testData$testAbs
 				testBg <- sim$testData$testBg
@@ -103,7 +107,6 @@ mainEvalModels <- function(
 					algo = algo,
 					perms = perms,
 					response = attributes(sim$response)$equationType,
-					numTrainBg = NA, # placeholder
 					numTestBg = sim$stats$numBg
 				)
 				
@@ -138,29 +141,25 @@ mainEvalModels <- function(
 
 				if ('multivariate' %in% type) {
 					
-					if (verbose > 1) omnibus::say('mv', post=0)
+					if (verbose > 1) omnibus::say('multi', post=0)
 					
 					# load model
 					load(paste0(modelDir, '/multivariate ', algo, '/', algo, fileAppendStartSpace, ' model ', prefix(iter, 3), '.Rdata'))
 					
-					numTrainBg <- if (!(algo %in% c('omniscient', 'maxent'))) {
-						if (exists('stats', where=model, inherits=FALSE)) {
-							model$stats$numTrainBg
-						} else {
-							sim$stats$numBg
-						}
-					} else if (algo == 'maxent') {
-						nrow(model@absence)
-					} else {
+					# number of training background sites
+					modelClass <- class(model)
+					numTrainBg <- if (modelClass == 'function') {
 						NA
+					} else {
+						enmSdm::modelSize(model, binary=TRUE)[['num0s']]
 					}
 					
-					thisPerform$numTrainBg <- numTrainBg
-					
+					thisPerform$numTrainBgMulti <- numTrainBg
+
 					### OBSERVED: presences and background sites
 					############################################
 					
-					if (class(model) != 'logical') {
+					if (!is.na(model) && class(model) != 'logical') {
 						
 						# compute observed predictions
 						predPres <- predictModel(model, testPres, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
@@ -214,9 +213,6 @@ mainEvalModels <- function(
 
 						if (verbose > 2) omnibus::say('perm', post=0)
 						
-						# variable names
-						vars <- sim$vars
-
 						# by EACH VARIABLE
 						for (i in seq_along(vars)) {
 						
@@ -289,7 +285,7 @@ mainEvalModels <- function(
 
 						for (thisVar in vars) {
 						
-							subOut <- data.frame(aucPresAbsPerm=NA, aucPresBgPerm=NA, cbiPerm=NA, corPresAbsPerm=NA, corPresBgPerm=NA)
+							subOut <- data.frame(numTrainBgMulti=NA, aucPresAbsPerm=NA, aucPresBgPerm=NA, cbiPerm=NA, corPresAbsPerm=NA, corPresBgPerm=NA)
 							if (strat) subOut <- cbind(subOut=NA, corStratPerm=NA)
 							names(subOut) <- gsub(names(subOut), pattern='Perm', replacement='')
 							names(subOut) <- paste0(names(subOut), 'Multi_perm', thisVar)
@@ -456,27 +452,26 @@ mainEvalModels <- function(
 					# load model
 					load(paste0(modelDir, '/reduced ', algo, '/', algo, fileAppendStartSpace, ' model ', prefix(iter, 3), '.Rdata'))
 					
-					numTrainBg <- if (!(algo %in% c('omniscient', 'maxent'))) {
-						if (exists('stats', where=model, inherits=FALSE)) {
-							model[[1]]$stats$numTrainBg
-						} else {
-							sim$stats$numBg
-						}
-					} else if (algo == 'maxent') {
-						nrow(model[[1]]@absence)
-					} else {
-						NA
-					}
-					
-					thisPerform$numTrainBg <- numTrainBg
-
 					### OBSERVED: normal
 					####################
 					
-					for (countVar in seq_along(sim$vars)) {
+					for (countVar in seq_along(vars)) {
 
+						# number of training background sites
+						modelClass <- class(model[[countVar]])
+						numTrainBg <- if (modelClass == 'function') {
+							NA
+						} else {
+							enmSdm::modelSize(model[[countVar]], binary=TRUE)[['num0s']]
+						}
+						
+						subOut <- data.frame(numTrainBg=numTrainBg)
+						names(subOut) <- paste0('numTrainBgRed_sans', vars[[countVar]])
+
+						thisPerform <- cbind(thisPerform, subOut)
+							
 						# if model converged
-						if (class(model[[countVar]]) != 'logical') {
+						if (!is.na(model[[countVar]]) && class(model[[countVar]]) != 'logical') {
 						
 							# compute observed predictions
 							predPres <- enmSdmPredImport::predictModel(model[[countVar]], testPres, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
@@ -497,9 +492,9 @@ mainEvalModels <- function(
 						}
 						
 						names(subOut) <- c(
-							paste0('aucPresAbsRed_sans', sim$vars[countVar]),
-							paste0('aucPresBgRed_sans', sim$vars[countVar]),
-							paste0('cbiRed_sans', sim$vars[countVar])
+							paste0('aucPresAbsRed_sans', vars[countVar]),
+							paste0('aucPresBgRed_sans', vars[countVar]),
+							paste0('cbiRed_sans', vars[countVar])
 						)
 						thisPerform <- cbind(thisPerform, subOut)
 						
@@ -518,31 +513,28 @@ mainEvalModels <- function(
 					# load model
 					load(paste0(modelDir, '/univariate ', algo, '/', algo, fileAppendStartSpace, ' model ', prefix(iter, 3), '.Rdata'))
 					
-					numTrainBg <- if (!(algo %in% c('omniscient', 'maxent'))) {
-						if (exists('stats', where=model, inherits=FALSE)) {
-							model[[1]]$stats$numTrainBg
-						} else {
-							sim$stats$numBg
-						}
-					} else if (algo == 'maxent') {
-						nrow(model[[1]]@absence)
-					} else {
-						NA
-					}
-					
-		print(numTrainBg)			
-					
-					thisPerform$numTrainBg <- numTrainBg
-
 					### OBSERVED: normal
 					for (countVar in seq_along(model)) {
 
 						thisVar <- names(model)[[countVar]]
 						thisVar <- substr(thisVar, 5, nchar(thisVar))
 						
+						# number of training background sites
+						modelClass <- class(model[[countVar]])
+						numTrainBg <- if (modelClass == 'function') {
+							NA
+						} else {
+							enmSdm::modelSize(model[[countVar]], binary=TRUE)[['num0s']]
+						}
+						
+						subOut <- data.frame(numTrainBg=numTrainBg)
+						names(subOut) <- paste0('numTrainBgUni_only', vars[[countVar]])
+
+						thisPerform <- cbind(thisPerform, subOut)
+						
 						# if model converged
 						if (class(model[[countVar]]) != 'logical') {
-print(model[[countVar]])						
+
 							# compute observed predictions
 							predPres <- predictModel(model[[countVar]], testPres, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
 							predAbs <- predictModel(model[[countVar]], testAbs, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
