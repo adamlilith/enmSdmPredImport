@@ -148,12 +148,15 @@ mainEvalModels <- function(
 					
 					# number of training background sites
 					modelClass <- class(model)
-					numTrainBg <- if (modelClass == 'function') {
+					
+					trainSize <- if (modelClass == 'function') {
 						NA
 					} else {
-						enmSdm::modelSize(model, binary=TRUE)[['num0s']]
+						enmSdm::modelSize(model, binary=TRUE)
 					}
 					
+					numTrainBg <- if (!is.na(trainSize[1])) { trainSize[['num0s']] } else { NA }
+
 					thisPerform$numTrainBgMulti <- numTrainBg
 
 					### OBSERVED: presences and background sites
@@ -285,7 +288,7 @@ mainEvalModels <- function(
 
 						for (thisVar in vars) {
 						
-							subOut <- data.frame(numTrainBgMulti=NA, aucPresAbsPerm=NA, aucPresBgPerm=NA, cbiPerm=NA, corPresAbsPerm=NA, corPresBgPerm=NA)
+							subOut <- data.frame(aucPresAbsPerm=NA, aucPresBgPerm=NA, cbiPerm=NA, corPresAbsPerm=NA, corPresBgPerm=NA)
 							if (strat) subOut <- cbind(subOut=NA, corStratPerm=NA)
 							names(subOut) <- gsub(names(subOut), pattern='Perm', replacement='')
 							names(subOut) <- paste0(names(subOut), 'Multi_perm', thisVar)
@@ -372,7 +375,7 @@ mainEvalModels <- function(
 								
 								nativeImp <- data.frame(import = imp)
 									
-								names(nativeImp) <- paste0('brtMultiImport', thisVar)
+								names(nativeImp) <- paste0('brtMultiNativeImport', thisVar)
 								thisPerform <- cbind(thisPerform, nativeImp)
 							
 							}
@@ -413,23 +416,26 @@ mainEvalModels <- function(
 						# BRT model failed to converge (assumes there has been at least *one* successful evaluation!)
 						} else {
 						
-							missingColumns <- names(perform)[grepl(names(perform), pattern='brtMultiImport')]
-							for (missingColumn in missingColumns) {
+							# single variables
+							for (thisVar in vars) {
 							
 								missing <- data.frame(DUMMY=NA)
-								names(missing) <- missingColumn
+								names(missing) <- paste0('brtMultiNativeImport', thisVar)
 								thisPerform <- cbind(thisPerform, missing)
 							
 							}
-
+							
+							# interactions
 							if (ia) {
 							
-								missingColumns <- names(perform)[grepl(names(perform), pattern='brtMultiNativeIa_')]
-								for (missingColumn in missingColumns) {
-								
-									missing <- data.frame(DUMMY=NA)
-									names(missing) <- missingColumn
-									thisPerform <- cbind(thisPerform, missing)
+								for (thisVar1 in vars[1:(length(vars) - 1)]) {
+									for (thisVar2 in vars[2:length(vars)]) {
+									
+										missing <- data.frame(DUMMY=NA)
+										names(missing) <- paste0('brtMultiNativeIa_', thisVar1, 'x', thisVar2)
+										thisPerform <- cbind(thisPerform, missing)
+									
+									}
 								
 								}
 								
@@ -459,11 +465,13 @@ mainEvalModels <- function(
 
 						# number of training background sites
 						modelClass <- class(model[[countVar]])
-						numTrainBg <- if (modelClass == 'function') {
+						trainSize <- if (modelClass == 'function') {
 							NA
 						} else {
-							enmSdm::modelSize(model[[countVar]], binary=TRUE)[['num0s']]
+							enmSdm::modelSize(model[[countVar]], binary=TRUE)
 						}
+						
+						numTrainBg <- if (!is.na(trainSize[1])) { trainSize[['num0s']] } else { NA }
 						
 						subOut <- data.frame(numTrainBg=numTrainBg)
 						names(subOut) <- paste0('numTrainBgRed_sans', vars[[countVar]])
@@ -518,15 +526,17 @@ mainEvalModels <- function(
 
 						thisVar <- names(model)[[countVar]]
 						thisVar <- substr(thisVar, 5, nchar(thisVar))
-						
+
 						# number of training background sites
 						modelClass <- class(model[[countVar]])
-						numTrainBg <- if (modelClass == 'function') {
+						trainSize <- if (modelClass == 'function') {
 							NA
 						} else {
-							enmSdm::modelSize(model[[countVar]], binary=TRUE)[['num0s']]
+							enmSdm::modelSize(model[[countVar]], binary=TRUE)
 						}
 						
+						numTrainBg <- if (!is.na(trainSize[1])) { trainSize[['num0s']] } else { NA }
+
 						subOut <- data.frame(numTrainBg=numTrainBg)
 						names(subOut) <- paste0('numTrainBgUni_only', vars[[countVar]])
 
@@ -563,7 +573,7 @@ mainEvalModels <- function(
 					} # next variable
 					
 				} # if doing univariate model
-			
+
 				perform <- rbind(perform, thisPerform)
 				rownames(perform) <- 1:nrow(perform)
 				if (verbose >= 3) { omnibus::say(''); print(perform) }
