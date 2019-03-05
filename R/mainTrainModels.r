@@ -50,7 +50,7 @@ mainTrainModels <- function(
 		} else if (length(numBg) == length(algos)) {
 			numBg[which(algo == algos)]
 		} else {
-			stop('Argument "numBg" must be NULL, a positive integer, or a vector of integers with same length as "algos".')
+			stop('Argument "numBg" must be NULL, a positive integer, or a *named* vector of integers with same length as "algos".')
 		}
 	
 		# for each iteration sample landscape, train model, and evaluate
