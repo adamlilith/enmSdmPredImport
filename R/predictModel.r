@@ -115,8 +115,20 @@ predictModel <- function(model, data, ...) {
 			...
 		)
 	
-	### standard models
+	### GAMs
 	###################
+	} else if ('gam' %in% modelClass) {
+	
+		mgcv::predict.gam(
+			model,
+			data,
+			response=TRUE,
+			na.rm=TRUE,
+			...
+		)
+	
+	### generic
+	###########
 	} else {
 	
 		predict(
