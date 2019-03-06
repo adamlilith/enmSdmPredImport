@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "Package: enmSdmPredImport\nType: Package\nTitle: Testing measures of predictor importance in species distribution models\nVersion: 0.1.9\nDate: 2019-03-05\nAuthor: Adam B. Smith <adam.smith@mobot.org>\nMaintainer: Adam B. Smith <adam.smith@mobot.org>\nDescription: This package is designed to assess how well commonly-\n    used measures of variable importance in ecological niche models\n    (ENMs) or species distribution models (SDMs) actually work. Its\n    core functions generate simulated landscapes and species,\n    iterate training of SDMs using this data, and calculate\n    variable importance, which can be compared to an \"omniscient\"\n    test which is always correct. It is provided as companion code\n    to Smith & Santos YYYY PAPER TITLE JOURNAL VOL:PAGES.\nLicense: GPL (>=3)\nEncoding: UTF-8\nLazyData: true\nURL: http://www.earthSkySea.org\nDepends:\nImports:\n\tcompiler,\n\tdismo,\n\tenmSdm,\n\tgbm,\n\tomnibus,\n\traster,\n\trgdal,\n\trJava,\n\tscales,\n\tsp,\n\tstatisfactory\nSuggests: \nRoxygenNote: 6.1.1\n",
+    "created" : 1551808103841.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3062390979",
+    "id" : "F0BDABFA",
+    "lastKnownWriteTime" : 1551808112,
+    "last_content_update" : 1551808112530,
+    "path" : "C:/ecology/Drive/R/enmSdmPredImport/DESCRIPTION",
+    "project_path" : "DESCRIPTION",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "dcf"
+}
