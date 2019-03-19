@@ -48,7 +48,7 @@ mainTrainModels <- function(
 		} else if (length(numBg) == 1) {
 			numBg
 		} else if (length(numBg) == length(algos)) {
-			numBg[which(algo == algos)]
+			numBg[[algo]]
 		} else {
 			stop('Argument "numBg" must be NULL, a positive integer, or a *named* vector of integers with same length as "algos".')
 		}
