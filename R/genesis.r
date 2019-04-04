@@ -44,8 +44,8 @@
 	#' \item \code{split} (Optional) Logical, if \code{TRUE} then before any rotation is performed swap values between the upper left ("northwest") corner and the lower right ("southeast") corners of the raster.
 #' }
 #' @param size Positive integer, number of rows/columns in each landscape raster.
-#' @param rescale Either \code{agg} in which case the \code{link[raster]{aggregate}} function is called after the landscape is created, \emph{or} \code{disagg} in which case the \code{link[raster]{disaggregate}} function is called after the landscape is created, \emph{or} \code{NULL} (default) in which case no dis/aggregation is performed. Arguments to can be passed to \code{aggregate} or \code{disaggregate} using \code{...}.
 #' @param circle Logical, if \code{TRUE} then the raster stack is cropped to a circle with values outside the circle left as \code{NA}. If \code{FALSE} (default), then the stack is left as a square.
+#' @param ... Other arguments (unused).
 #' @return A raster stack.
 #' @examples
 #' geog1 <- list(
@@ -92,7 +92,6 @@
 genesis <- function(
 	geography,
 	size=1001,
-	rescale=NULL,
 	circle=TRUE,
 	verbose=FALSE,
 	...
@@ -218,16 +217,6 @@ genesis <- function(
 	# add noise to any raster that needs it
 	landscape <- noisy(landscape, geography)
 
-	# rescale
-	if (!is.null(rescale)) {
-
-		landscape <- if (rescale == 'agg') {
-			raster::aggregate(landscape, ...)
-		} else if (rescale == 'disagg') {
-			raster::disaggregate(landscape, ...)
-		}
-	}
-	
 	raster::projection(landscape) <- '+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs' # Mollweide (equal area)
 	landscape <- raster::setMinMax(landscape)
 	
