@@ -4,8 +4,7 @@
 \alias{genesis}
 \title{Generate a raster stack representing variables on a landscape.}
 \usage{
-genesis(geography, size = 1001, rescale = NULL, circle = TRUE,
-  verbose = FALSE, ...)
+genesis(geography, size = 1001, circle = TRUE, verbose = FALSE, ...)
 }
 \arguments{
 \item{geography}{List object composed of lists, with one list per layer on the landscape. The name of the sublists correspond to the names of the layers to be generated. Each sublist has some of the following components (some are required, some optional).
@@ -53,9 +52,9 @@ genesis(geography, size = 1001, rescale = NULL, circle = TRUE,
 
 \item{size}{Positive integer, number of rows/columns in each landscape raster.}
 
-\item{rescale}{Either \code{agg} in which case the \code{link[raster]{aggregate}} function is called after the landscape is created, \emph{or} \code{disagg} in which case the \code{link[raster]{disaggregate}} function is called after the landscape is created, \emph{or} \code{NULL} (default) in which case no dis/aggregation is performed. Arguments to can be passed to \code{aggregate} or \code{disaggregate} using \code{...}.}
-
 \item{circle}{Logical, if \code{TRUE} then the raster stack is cropped to a circle with values outside the circle left as \code{NA}. If \code{FALSE} (default), then the stack is left as a square.}
+
+\item{...}{Other arguments (unused).}
 }
 \value{
 A raster stack.
