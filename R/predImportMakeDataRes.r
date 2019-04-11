@@ -27,8 +27,8 @@
 #' @param verbose Numeric, if 0 then show minimal output, 1 more output, 2 even more, >2 all of it.
 #' @param ... Other arguments (unused).
 #' @details This function is useful for examining how well SDMs can measure the importance of variables if the spatial resolution (grain size) of the predictors is different from the spatial scale at which a species responds to the environment. Hereafter, the response scale is called the "native" scale and the scale at which predictors are available the "sampled" scale.  The sampled scale resolution can be larger or smaller than the native scale resolution.  
-#' Unlike the \code{predImportMakeData} function, this function creates two \code{sim} objects and saves them in two directories. The first \code{sim} object, saved in the \code{simDirNative} will have training and test data for the native scale. The second \code{sim} object will have training data at the sampled scale and test data at the native scale (which will be exactly the same as the test data in the first \code{sim} object). Generating two \code{sim} objects using the same underlying data allows you to compare models trained/tested on the native versus sampled scales.  
-#' Rasters in the native and sampled landscapes have the same extent.  Thus, even though we're talking about resolution (size of a cell relative to the size of the raster), we specify resolution by the number of cells along the side of the landscape.  Since all landscapes are simulated to have the same extent, specifying a larger number of cells causes the resolution to become higher (grain size smaller).  Thus, the user must specify a size of the landscape (number of cells on a side) at the native and sampled resolutions.
+#' Unlike the \code{predImportMakeData} function, this function creates two \code{sim} objects and saves them in two directories. The first \code{sim} object, saved in the \code{simDirNative} will have training and test data for the native scale. The second \code{sim} object will have training and test data at the sampled scale from the same sites used to generate train and test data at the native scale. Generating two \code{sim} objects using the same underlying sites allows you to compare models trained/tested on the native versus sampled scales.  
+#' Rasters in the native and sampled landscapes have the same extent. Thus, even though we're talking about resolution (size of a cell relative to the size of the raster), we specify resolution by the number of cells along the side of the landscape.  Since all landscapes are simulated to have the same extent, specifying a larger number of cells causes the resolution to become higher (grain size smaller).  Thus, the user must specify a size of the landscape (number of cells on a side) at the native and sampled resolutions.
 #' @return Nothing (saves data files to disc).
 #' @seealso \code{\link[enmSdmPredImport]{predImportMakeData}}, \code{\link[enmSdmPredImport]{predImportTrainModels}}, \code{\link[enmSdmPredImport]{predImportEval}}
 #' @export
@@ -110,6 +110,9 @@ predImportMakeDataRes <- function(
 				} else if (attr(response, 'equationType') == 'gaussian') {
 					list(x1=landscapeNative[[1]], x2=landscapeNative[[2]], mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
 				}
+				
+				# remake map of species true probability of occurrence
+				speciesMap <- do.call(response, args=args)
 					
 			# re-make any random layers for next simulation
 			} else if (any(unlist(geography) %in% 'random')) {
@@ -123,12 +126,10 @@ predImportMakeDataRes <- function(
 					landscapeNative
 				}
 				
+				# remake map of species true probability of occurrence
 				speciesMap <- do.call(response, args=args)
 			
 			}
-
-			# remake map of species true probability of occurrence
-			if (!exists('speciesMap', inherits=FALSE)) speciesMap <- do.call(response, args=args)
 
 			### generate training/test and background sites at NATIVE resolution
 			####################################################################
@@ -178,8 +179,14 @@ predImportMakeDataRes <- function(
 
 			### compile SAMPLED training/test ENVIRONMENTAL DATA
 			trainPresSampled <- as.data.frame(extract(landscapeSampled, trainPresSites))
+			testPresSampled <- as.data.frame(extract(landscapeSampled, testPresSites))
+			testAbsSampled <- as.data.frame(extract(landscapeSampled, testAbsSites))
+
 			bgEnvTrainSampled <- as.data.frame(extract(landscapeSampled, bgSitesTrain))
+			
 			trainDataSampled <- cbind(presBg, rbind(trainPresSampled, bgEnvTrainSampled))
+
+			testBgSampled <- as.data.frame(extract(landscapeSampled, testBgSites))
 
 			# prevalence
 			prev <- cellStats(speciesMap, 'mean')
@@ -211,13 +218,13 @@ predImportMakeDataRes <- function(
 
 			sim$stats <- data.frame(numTrainPres=numTrainPres, numTestPres=numTestPres, numBg=numBg, prev=prev, circle=circle, landscapeSize=nrow(landscapeSampled), b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
 			sim$response <- response
-			sim$vars <- names(landscapeNative)
+			sim$vars <- names(landscapeSampled)
 			sim$geography <- geography
 			sim$trainData <- trainDataSampled
 			sim$testData <- list()
-			sim$testData$testPres <- testPresNative
-			sim$testData$testAbs <- testAbsNative
-			sim$testData$testBg <- testBgNative
+			sim$testData$testPres <- testPresSampled
+			sim$testData$testAbs <- testAbsSampled
+			sim$testData$testBg <- testBgSampled
 
 			class(sim) <- c('sim', class(sim))
 

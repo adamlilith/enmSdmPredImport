@@ -1,8 +1,8 @@
 Package: enmSdmPredImport
 Type: Package
 Title: Testing measures of predictor importance in species distribution models
-Version: 0.2.1
-Date: 2019-04-09
+Version: 0.2.2
+Date: 2019-04-10
 Author: Adam B. Smith <adam.smith@mobot.org>
 Maintainer: Adam B. Smith <adam.smith@mobot.org>
 Description: This package is designed to assess how well commonly-
