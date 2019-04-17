@@ -119,7 +119,16 @@ predImportMakeDataRes <- function(
 			
 				landscapeNative <<- genesis(geography, circle=circle, size=sizeNative)
 				
+				# rescale landscape to "SAMPLED" scale at which predictors are available
+				templateSampled <- raster::raster(
+					nrows=sizeSampled,
+					ncols=sizeSampled,
+					crs=raster::projection(landscapeNative),
+					ext=extent(landscapeNative)
+				)
+
 				resSampled <- raster::res(templateSampled)
+				
 				landscapeSampled <- if (resNative != resSampled) {
 					raster::resample(landscapeNative, templateSampled, ...)
 				} else {
