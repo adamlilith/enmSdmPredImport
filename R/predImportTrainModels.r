@@ -4,7 +4,7 @@
 #' @param simDir Character, path name of directory in which scenario data files are saved.
 #' @param modelDir Character, path name of directory in which model files are saved. Depending on whether multivariate, reduced, and/or univariate models are trained, inside this folder will be subfolders named "multivariate", "reduced", and/or "univariate" followed by the name of the algorithm (e.g., "multivariate brt").
 #' @param vars Character vector, names of variables to use in model training. These should match the names in the \code{geography} argument supplied to the \code{predImportMakeData} function. See \code{\link[enmSdmPredImport]{genesis}} function for more details on \code{geography}.
-#' @param algos Character list of model algorithms. Options include \code{omniscient}, \code{brt} (boosted regression trees), \code{gam} (generalized additive models), \code{glm} (generalized linear models), \code{maxent} (Maxent, using version 3.3.3k or before), or \code{rf} (random forests).
+#' @param algos Character list of model algorithms to implement. Options include \code{omniscient}, \code{brt} (boosted regression trees), \code{gam} (generalized additive models), \code{glm} (generalized linear models), \code{maxent} (Maxent, using version 3.3.3k or before), \code{maxnet} (Maxent, version 3.4 or higher), or \code{rf} (random forests).
 #' @param type Character, type of models to train. Options include \code{multivariate} (use all variables in \code{vars}, \code{reduced} (a series of models, each using all but one variable in \code{vars}), and/or \code{univariate} (a series of models, one per variable in \code{vars}).
 #' @param iters Vector of positive integers, data iterations to train models for.
 #' @param numBg Positive integer, vector of positive integers, or \code{NULL}. This is the number of background sites used to train the model. If this is \code{NULL} (default), then the number of background sites will be equal to the number of sites available in the "sim" object created by \code{predImportMakeData}. If this is a single integer, then the background sites used for training will be taken from the first \code{numBg} sites available in the "sim" object. If this is a vector, then it must be the same length as \code{algos}, and each algorithm will then be presented with the respective number of background sites. If the latter, the vector must have names that match the algorithm(s) being used.
@@ -21,7 +21,7 @@ predImportTrainModels <- function(
 	simDir,
 	modelDir,
 	vars,
-	algos=c('omniscient', 'brt', 'gam', 'glm', 'maxent', 'rf'),
+	algos=c('omniscient', 'bioclim', 'brt', 'gam', 'glm', 'maxent', 'maxnet', 'rf'),
 	type=c('multivariate', 'reduced', 'univariate'),
 	iters=1:100,
 	numBg=NULL,
@@ -92,6 +92,12 @@ predImportTrainModels <- function(
 						out <- response
 						attr(out, 'modelType') <- 'full'
 
+					} else if (algo=='bioclim') {
+					
+						bioclimData <- trainData[trainData$presAbs == 1, , drop=FALSE]
+						bioclimData <- as.matrix(bioclimData)
+						out <- dismo::bioclim(bioclimData, ...)
+
 					} else if (algo=='glm') {
 					
 						out <- enmSdm::trainGlm(
@@ -110,6 +116,16 @@ predImportTrainModels <- function(
 							resp='presBg',
 							preds=names(trainData)[2:ncol(trainData)],
 							scratchDir=tempDir,
+							verbose=(verbose > 2),
+							...
+						)
+
+					} else if (algo=='maxnet') {
+					
+						out <- enmSdm::trainMaxNet(
+							data=trainData,
+							resp='presBg',
+							preds=names(trainData)[2:ncol(trainData)],
 							verbose=(verbose > 2),
 							...
 						)
@@ -199,6 +215,12 @@ predImportTrainModels <- function(
 								attr(out, 'modelType') <- 'reduced'
 								attr(out, 'reducedSans') <- names(sim$geography)[count]
 							
+							} else if (algo=='bioclim') {
+							
+								bioclimData <- reducedTrainData[reducedTrainData$presAbs == 1, 2:reducedTrainData, drop=FALSE]
+								bioclimData <- as.matrix(bioclimData)
+								out <- dismo::bioclim(bioclimData, ...)
+
 							} else if (algo=='glm') {
 							
 								out <- enmSdm::trainGlm(
@@ -221,6 +243,16 @@ predImportTrainModels <- function(
 									...
 								)
 								
+							} else if (algo=='maxnet') {
+							
+								out <- enmSdm::trainMaxNet(
+									data=reducedTrainData,
+									resp='presBg',
+									preds=names(reducedTrainData)[2:ncol(reducedTrainData)],
+									verbose=(verbose > 2),
+									...
+								)
+
 							} else if (algo=='brt') {
 						
 								set.seed(sim$seed)
@@ -310,6 +342,13 @@ predImportTrainModels <- function(
 							attr(out, 'modelType') <- 'univariate'
 							attr(out, 'univarWith') <- names(sim$geography)[count]
 
+						# BIOCLIM
+						} else if (algo=='bioclim') {
+						
+							bioclimData <- univarTrainData[univarTrainData$presAbs == 1, vars[count], drop=FALSE]
+							bioclimData <- as.matrix(bioclimData)
+							out <- dismo::bioclim(bioclimData, ...)
+
 						# GLM
 						} else if (algo=='glm') {
 						
@@ -335,7 +374,18 @@ predImportTrainModels <- function(
 								...
 							)
 
-						### BRTs
+						# maxnet
+						} else if (algo=='maxnet') {
+						
+							out <- enmSdm::trainMaxNet(
+								data=univarTrainData,
+								resp='presBg',
+								preds=vars[count],
+								verbose=(verbose > 2),
+								...
+							)
+
+						# BRTs
 						} else if (algo=='brt') {
 
 							set.seed(sim$seed)
