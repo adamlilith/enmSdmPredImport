@@ -4,11 +4,11 @@
 \alias{predImportEval}
 \title{Evaluate predictor importance of models trained on simulated data}
 \usage{
-predImportEval(simDir, modelDir, evalDir, algos = c("omniscient", "brt",
-  "gam", "maxent", "rf"), type = c("multivariate", "reduced",
-  "univariate"), iters = 1:100, perms = 30L, ia = TRUE,
-  strat = FALSE, overwrite = FALSE, filePrepend = NULL,
-  verbose = 1, ...)
+predImportEval(simDir, modelDir, evalDir, algos = c("omniscient",
+  "bioclim", "brt", "gam", "glm", "maxent", "maxnet", "rf"),
+  type = c("multivariate", "reduced", "univariate"), iters = 1:100,
+  perms = 30L, ia = TRUE, strat = FALSE, overwrite = FALSE,
+  filePrepend = NULL, verbose = 1, ...)
 }
 \arguments{
 \item{simDir}{Character, path name of directory in which scenario data files are saved.}
@@ -17,7 +17,7 @@ predImportEval(simDir, modelDir, evalDir, algos = c("omniscient", "brt",
 
 \item{evalDir}{Character, path name of directory to which to save evaluations.}
 
-\item{algos}{Character list of model algorithms to evaluate. Options include \code{omniscient}, \code{brt} (boosted regression trees), \code{gam} (generalized additive models), \code{glm} (generalized linear models), \code{maxent} (Maxent, using version 3.3.3k or before), or \code{rf} (random forests).}
+\item{algos}{Character list of model algorithms to evaluate. Options include \code{omniscient}, \code{brt} (boosted regression trees), \code{gam} (generalized additive models), \code{glm} (generalized linear models), \code{maxent} (Maxent, using version 3.3.3k or before), \code{maxnet} (Maxent, version 3.4 or higher), or \code{rf} (random forests).}
 
 \item{type}{Character, type of models to train. Options include \code{multivariate} (use all variables in \code{vars}, \code{reduced} (a series of models, each using all but one variable in \code{vars}), and/or \code{univariate} (a series of models, one per variable in \code{vars}).}
 

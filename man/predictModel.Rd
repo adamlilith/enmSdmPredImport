@@ -2,7 +2,7 @@
 % Please edit documentation in R/predictModel.r
 \name{predictModel}
 \alias{predictModel}
-\title{Predict OMNISCIENT, Maxent, BRT, RF, and GAM model objects}
+\title{Predict OMNISCIENT, BIOCLIM, Maxent, BRT, RF, and GAM model objects}
 \usage{
 predictModel(model, data, ...)
 }
@@ -17,5 +17,5 @@ predictModel(model, data, ...)
 Numeric vector.
 }
 \description{
-Predict OMNISCIENT, Maxent, BRT, RF, and GAM model objects.
+Predict OMNISCIENT, BIOCLIM, Maxent, BRT, RF, and GAM model objects.
 }

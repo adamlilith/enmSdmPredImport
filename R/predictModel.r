@@ -1,6 +1,6 @@
-#' Predict OMNISCIENT, Maxent, BRT, RF, and GAM model objects
+#' Predict OMNISCIENT, BIOCLIM, Maxent, BRT, RF, and GAM model objects
 #' 
-#' Predict OMNISCIENT, Maxent, BRT, RF, and GAM model objects.
+#' Predict OMNISCIENT, BIOCLIM, Maxent, BRT, RF, and GAM model objects.
 #' @param model Model object.
 #' @param data Data frame.
 #' @param ... Arguments to pass to \code{predict} function.
@@ -91,6 +91,12 @@ predictModel <- function(model, data, ...) {
 			}
 		
 		}
+	
+	### BIOCLIM models
+	##################
+	} else if ('Bioclim' %in% modelClass) {
+	
+		dismo::predict(model, data=data, ...)
 	
 	### Maxent models
 	#################

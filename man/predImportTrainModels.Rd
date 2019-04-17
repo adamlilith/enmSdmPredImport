@@ -5,9 +5,9 @@
 \title{Train SDMs across multiple iterations of a scenario}
 \usage{
 predImportTrainModels(simDir, modelDir, vars, algos = c("omniscient",
-  "brt", "gam", "glm", "maxent", "rf"), type = c("multivariate",
-  "reduced", "univariate"), iters = 1:100, numBg = NULL,
-  filePrepend = NULL, overwrite = FALSE,
+  "bioclim", "brt", "gam", "glm", "maxent", "maxnet", "rf"),
+  type = c("multivariate", "reduced", "univariate"), iters = 1:100,
+  numBg = NULL, filePrepend = NULL, overwrite = FALSE,
   tempDir = raster::rasterOptions()$tmpdir, verbose = 1, ...)
 }
 \arguments{
@@ -17,7 +17,7 @@ predImportTrainModels(simDir, modelDir, vars, algos = c("omniscient",
 
 \item{vars}{Character vector, names of variables to use in model training. These should match the names in the \code{geography} argument supplied to the \code{predImportMakeData} function. See \code{\link[enmSdmPredImport]{genesis}} function for more details on \code{geography}.}
 
-\item{algos}{Character list of model algorithms. Options include \code{omniscient}, \code{brt} (boosted regression trees), \code{gam} (generalized additive models), \code{glm} (generalized linear models), \code{maxent} (Maxent, using version 3.3.3k or before), or \code{rf} (random forests).}
+\item{algos}{Character list of model algorithms to implement. Options include \code{omniscient}, \code{brt} (boosted regression trees), \code{gam} (generalized additive models), \code{glm} (generalized linear models), \code{maxent} (Maxent, using version 3.3.3k or before), \code{maxnet} (Maxent, version 3.4 or higher), or \code{rf} (random forests).}
 
 \item{type}{Character, type of models to train. Options include \code{multivariate} (use all variables in \code{vars}, \code{reduced} (a series of models, each using all but one variable in \code{vars}), and/or \code{univariate} (a series of models, one per variable in \code{vars}).}
 

@@ -4,7 +4,7 @@
 #' @param simDir Character, path name of directory in which scenario data files are saved.
 #' @param modelDir Character, path name of directory in which model files are saved.
 #' @param evalDir Character, path name of directory to which to save evaluations.
-#' @param algos Character list of model algorithms to evaluate. Options include \code{omniscient}, \code{brt} (boosted regression trees), \code{gam} (generalized additive models), \code{glm} (generalized linear models), \code{maxent} (Maxent, using version 3.3.3k or before), or \code{rf} (random forests).
+#' @param algos Character list of model algorithms to evaluate. Options include \code{omniscient}, \code{brt} (boosted regression trees), \code{gam} (generalized additive models), \code{glm} (generalized linear models), \code{maxent} (Maxent, using version 3.3.3k or before), \code{maxnet} (Maxent, version 3.4 or higher), or \code{rf} (random forests).
 #' @param type Character, type of models to train. Options include \code{multivariate} (use all variables in \code{vars}, \code{reduced} (a series of models, each using all but one variable in \code{vars}), and/or \code{univariate} (a series of models, one per variable in \code{vars}).
 #' @param iters Vector of positive integers, data iterations to evaluate.
 #' @param perms Positive integer, number of permutations for permutation tests of variable importance. Default is 30.
@@ -22,7 +22,7 @@ predImportEval <- function(
 	simDir,
 	modelDir,
 	evalDir,
-	algos=c('omniscient', 'brt', 'gam', 'maxent', 'rf'),
+	algos=c('omniscient', 'bioclim', 'brt', 'gam', 'glm', 'maxent', 'maxnet', 'rf'),
 	type=c('multivariate', 'reduced', 'univariate'),
 	iters=1:100,
 	perms=30L,
