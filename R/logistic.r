@@ -7,6 +7,7 @@
 #' @param b1 Numeric, slope with respect to \code{x1}. Default is 1.
 #' @param b2 Numeric, slope with respect to \code{x2}. Default is 0.
 #' @param b12 Numeric, slope with respect to \code{x1 * x2}. Default is 0 (no interaction).
+#' @param ... Other arguments (not used).
 #' @return A logistic function.
 #' @examples
 #' x1 <- seq(-1, 1, by=0.01)

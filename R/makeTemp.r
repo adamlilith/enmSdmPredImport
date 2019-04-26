@@ -7,9 +7,9 @@
 
 makeTemp <- function(path='C:/ecology/!Scratch/_scratchDir_dontDelete') {
 
-	tempDir <- paste0('/_temp', round(10^7 * runif(1)))
-	dir.create(path=tempDir, showWarnings=F, recursive=T)
-	rasterOptions(tmpdir=tempDir)
+	tempDir <- paste0('/_temp', round(10^7 * stats::runif(1)))
+	dir.create(path=tempDir, showWarnings=FALSE, recursive=TRUE)
+	raster::rasterOptions(tmpdir=tempDir)
 	tempDir
 	
 }

@@ -4,7 +4,7 @@
 #' @param geography A list of lists describing the simulated environmental layers.  Each sublist pertains to one later. See \code{\link[enmSdmPredImport]{genesis}} for details.
 #' @param response A function describing the response of the species to the environment. This must be one of: \code{\link[enmSdmPredImport]{logistic}}, \code{\link[enmSdmPredImport]{logisticShift}}, or \code{\link[enmSdmPredImport]{gaussian}}.
 #' @param simDirNative Character, path name of directory in which scenario data files are saved. This directory will contain data at the spatial resolution at which species respond to the environment.
-#' @param simDirNative Character, path name of directory in which scenario data files are saved. This directory will contain data at the spatial resolution at which predictors are available (which may or may not correspond to the scale at which species respond to the environment).
+#' @param simDirSampled Character, path name of directory in which scenario data files are saved. This directory will contain data at the spatial resolution at which predictors are available (which may or may not correspond to the scale at which species respond to the environment).
 #' @param numTrainPres Positive integer, number of training presences to locate.
 #' @param numTestPres Positive integer, number of test presences to locate. The number of test absences will also be equal to this value.
 #' @param numBg Positive integer, number of training and number of test background sites to locate.
@@ -46,7 +46,7 @@ predImportMakeDataRes <- function(
 	sizeNative=1024,
 	sizeSampled=256,
 	filePrepend=NULL,
-	b0=NA, b1=NA, b2=NA, b11=NA, b12=NA, mu1=NA, sigma1=NA, sigma2=NA, rho=NA,
+	b0=NA, b1=NA, b2=NA, b11=NA, b12=NA, mu1=NA, mu2=NA, sigma1=NA, sigma2=NA, rho=NA,
 	overwrite=FALSE,
 	verbose=1,
 	...
@@ -64,7 +64,7 @@ predImportMakeDataRes <- function(
 	for (iter in iters) {
 
 		# DO NOT re-create data
-		simFileExists <- file.exists(paste0(simDirNative, '/', filePrependEndSpace, 'sim ', prefix(iter, 3), '.Rdata'))
+		simFileExists <- file.exists(paste0(simDirNative, '/', filePrependEndSpace, 'sim ', omnibus::prefix(iter, 3), '.Rdata'))
 		if (!overwrite && simFileExists) {
 
 			omnibus::say(iter, '\U2713', post=0)
@@ -85,7 +85,7 @@ predImportMakeDataRes <- function(
 			if (iter == 1 | skippedAny) {
 
 				# create FINEST-SCALE landscape
-				landscapeNative <<- genesis(geography, circle=circle, size=sizeNative, verbose=verbose > 1)
+				landscapeNative <- genesis(geography, circle=circle, size=sizeNative, verbose=verbose > 1)
 				resNative <- raster::res(landscapeNative)
 				
 				# rescale landscape to "SAMPLED" scale at which predictors are available
@@ -93,7 +93,7 @@ predImportMakeDataRes <- function(
 					nrows=sizeSampled,
 					ncols=sizeSampled,
 					crs=raster::projection(landscapeNative),
-					ext=extent(landscapeNative)
+					ext=raster::extent(landscapeNative)
 				)
 				resSampled <- raster::res(templateSampled)
 				landscapeSampled <- if (resNative != resSampled) {
@@ -115,7 +115,7 @@ predImportMakeDataRes <- function(
 				speciesMap <- do.call(response, args=args)
 					
 			# re-make any random layers for next simulation
-			} else if (any(unlist(geography) %in% c('random', 'noisy'))) {
+			} else if (any(unlist(geography) %in% c('random', 'noise'))) {
 			
 				landscapeNative <<- genesis(geography, circle=circle, size=sizeNative)
 				
@@ -124,7 +124,7 @@ predImportMakeDataRes <- function(
 					nrows=sizeSampled,
 					ncols=sizeSampled,
 					crs=raster::projection(landscapeNative),
-					ext=extent(landscapeNative)
+					ext=raster::extent(landscapeNative)
 				)
 
 				resSampled <- raster::res(templateSampled)
@@ -148,7 +148,7 @@ predImportMakeDataRes <- function(
 
 			# estimate sample size needed to get sufficient presences and absences
 			n <- round(1.5 * (numTrainPres + numTestPres)) # initial number of randomly located sites to draw
-			prevWithNa <- cellStats(speciesMap, 'sum')  / ncell(speciesMap) # prevalence (including NA cells)
+			prevWithNa <- raster::cellStats(speciesMap, 'sum')  / raster::ncell(speciesMap) # prevalence (including NA cells)
 
 			while (n * prevWithNa < numTrainPres + numTestPres | n * (1 - prevWithNa) < numTestPres) { n <- round(n * 1.5) }
 
@@ -156,9 +156,9 @@ predImportMakeDataRes <- function(
 			presAbs <- -Inf # initial sum of sampled presences
 			while (sum(presAbs) < numTrainPres + numTestPres | sum(!presAbs) < numTestPres) {
 
-				sites <- sampleRast(x=maskNative, n=n, adjArea=FALSE, replace=TRUE, prob=FALSE)
-				prOcc <- extract(speciesMap, sites)
-				presAbs <- runif(nrow(sites)) <= prOcc
+				sites <- enmSdm::sampleRast(x=maskNative, n=n, adjArea=FALSE, replace=TRUE, prob=FALSE)
+				prOcc <- raster::extract(speciesMap, sites)
+				presAbs <- stats::runif(nrow(sites)) <= prOcc
 
 				n <- 1.5 * n
 
@@ -174,31 +174,31 @@ predImportMakeDataRes <- function(
 			### compile NATIVE training/test ENVIRONMENTAL DATA
 			presBg <- data.frame(presBg=c(rep(1, numTrainPres), rep(0, numBg)))
 
-			trainPresNative <- as.data.frame(extract(landscapeNative, trainPresSites))
-			testPresNative <- as.data.frame(extract(landscapeNative, testPresSites))
-			testAbsNative <- as.data.frame(extract(landscapeNative, testAbsSites))
+			trainPresNative <- as.data.frame(raster::extract(landscapeNative, trainPresSites))
+			testPresNative <- as.data.frame(raster::extract(landscapeNative, testPresSites))
+			testAbsNative <- as.data.frame(raster::extract(landscapeNative, testAbsSites))
 
-			bgSitesTrain <- sampleRast(x=maskNative, n=numBg, adjArea=FALSE, replace=TRUE, prob=FALSE)
-			bgEnvTrainNative <- as.data.frame(extract(landscapeNative, bgSitesTrain))
+			bgSitesTrain <- enmSdm::sampleRast(x=maskNative, n=numBg, adjArea=FALSE, replace=TRUE, prob=FALSE)
+			bgEnvTrainNative <- as.data.frame(raster::extract(landscapeNative, bgSitesTrain))
 
 			trainDataNative <- cbind(presBg, rbind(trainPresNative, bgEnvTrainNative))
 
-			testBgSites <- sampleRast(x=maskNative, n=numBg, adjArea=FALSE, replace=TRUE, prob=FALSE)
-			testBgNative <- as.data.frame(extract(landscapeNative, testBgSites))
+			testBgSites <- enmSdm::sampleRast(x=maskNative, n=numBg, adjArea=FALSE, replace=TRUE, prob=FALSE)
+			testBgNative <- as.data.frame(raster::extract(landscapeNative, testBgSites))
 
 			### compile SAMPLED training/test ENVIRONMENTAL DATA
-			trainPresSampled <- as.data.frame(extract(landscapeSampled, trainPresSites))
-			testPresSampled <- as.data.frame(extract(landscapeSampled, testPresSites))
-			testAbsSampled <- as.data.frame(extract(landscapeSampled, testAbsSites))
+			trainPresSampled <- as.data.frame(raster::extract(landscapeSampled, trainPresSites))
+			testPresSampled <- as.data.frame(raster::extract(landscapeSampled, testPresSites))
+			testAbsSampled <- as.data.frame(raster::extract(landscapeSampled, testAbsSites))
 
-			bgEnvTrainSampled <- as.data.frame(extract(landscapeSampled, bgSitesTrain))
+			bgEnvTrainSampled <- as.data.frame(raster::extract(landscapeSampled, bgSitesTrain))
 			
 			trainDataSampled <- cbind(presBg, rbind(trainPresSampled, bgEnvTrainSampled))
 
-			testBgSampled <- as.data.frame(extract(landscapeSampled, testBgSites))
+			testBgSampled <- as.data.frame(raster::extract(landscapeSampled, testBgSites))
 
 			# prevalence
-			prev <- cellStats(speciesMap, 'mean')
+			prev <- raster::cellStats(speciesMap, 'mean')
 
 			# remember NATIVE data
 			sim <- list()
@@ -218,7 +218,7 @@ predImportMakeDataRes <- function(
 			class(sim) <- c('sim', class(sim))
 
 			omnibus::dirCreate(simDirNative)
-			save(sim, file=paste0(simDirNative, '/', filePrependEndSpace, 'sim ', prefix(iter, 3), '.Rdata'))
+			save(sim, file=paste0(simDirNative, '/', filePrependEndSpace, 'sim ', omnibus::prefix(iter, 3), '.Rdata'))
 
 			# remember SAMPLED data
 			sim <- list()
@@ -238,7 +238,7 @@ predImportMakeDataRes <- function(
 			class(sim) <- c('sim', class(sim))
 
 			omnibus::dirCreate(simDirSampled)
-			save(sim, file=paste0(simDirSampled, '/', filePrependEndSpace, 'sim ', prefix(iter, 3), '.Rdata'))
+			save(sim, file=paste0(simDirSampled, '/', filePrependEndSpace, 'sim ', omnibus::prefix(iter, 3), '.Rdata'))
 			gc()
 
 		} # re-create data?

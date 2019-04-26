@@ -9,7 +9,7 @@ delTemp(tempDir, defaultTempDir = "C:/ecology/!Scratch")
 \arguments{
 \item{tempDir}{Character, directory path to delete.}
 
-\item{defaultTemp}{Character, default temporary directory (temp directory will be redirected here).}
+\item{defaultTempDir}{Character, default temporary directory (temp directory will be redirected here).}
 }
 \value{
 Nothing (deletes a directory).

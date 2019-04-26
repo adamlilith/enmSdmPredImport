@@ -7,8 +7,8 @@
 predImportMakeData(geography, response, simDir, numTrainPres = 200,
   numTestPres = 200, numBg = 10000, iters = 1:100, circle = FALSE,
   size = 1001, filePrepend = NULL, b0 = NA, b1 = NA, b2 = NA,
-  b11 = NA, b12 = NA, mu1 = NA, sigma1 = NA, sigma2 = NA,
-  rho = NA, overwrite = FALSE, verbose = 1, ...)
+  b11 = NA, b12 = NA, mu1 = NA, mu2 = mu2, sigma1 = NA,
+  sigma2 = NA, rho = NA, overwrite = FALSE, verbose = 1, ...)
 }
 \arguments{
 \item{geography}{A list of lists describing the simulated environmental layers.  Each sublist pertains to one later. See \code{\link[enmSdmPredImport]{genesis}} for details.}
@@ -43,6 +43,8 @@ predImportMakeData(geography, response, simDir, numTrainPres = 200,
 
 \item{mu1}{Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Mean of variable. Default is \code{NA}.}
 
+\item{mu2}{Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Mean of variable. Default is \code{NA}.}
+
 \item{sigma1}{Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Standard deviation of variable. Default is \code{NA}.}
 
 \item{sigma2}{Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Standard deviation of variable. Default is \code{NA}.}
@@ -54,8 +56,6 @@ predImportMakeData(geography, response, simDir, numTrainPres = 200,
 \item{verbose}{Numeric, if 0 then show minimal output, 1 more output, 2 even more, >2 all of it.}
 
 \item{...}{Other arguments (unused).}
-
-\item{mu2}{Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Mean of variable. Default is \code{NA}.}
 }
 \value{
 Nothing (saves data files to disc).

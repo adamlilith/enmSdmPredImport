@@ -18,6 +18,8 @@ logistic(x1, x2 = 0, b0 = 0, b1 = 1, b2 = 0, b12 = 0, ...)
 \item{b2}{Numeric, slope with respect to \code{x2}. Default is 0.}
 
 \item{b12}{Numeric, slope with respect to \code{x1 * x2}. Default is 0 (no interaction).}
+
+\item{...}{Other arguments (not used).}
 }
 \value{
 A logistic function.

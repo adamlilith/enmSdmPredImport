@@ -39,7 +39,7 @@ predImportMakeData <- function(
 	circle=FALSE,
 	size=1001,
 	filePrepend=NULL,
-	b0=NA, b1=NA, b2=NA, b11=NA, b12=NA, mu1=NA, sigma1=NA, sigma2=NA, rho=NA,
+	b0=NA, b1=NA, b2=NA, b11=NA, b12=NA, mu1=NA, mu2=mu2, sigma1=NA, sigma2=NA, rho=NA,
 	overwrite=FALSE,
 	verbose=1,
 	...
@@ -58,7 +58,7 @@ predImportMakeData <- function(
 	for (iter in iters) {
 
 		# DO NOT re-create data
-		simFileExists <- file.exists(paste0(simDir, '/', filePrependEndSpace, 'sim ', prefix(iter, 3), '.Rdata'))
+		simFileExists <- file.exists(paste0(simDir, '/', filePrependEndSpace, 'sim ', omnibus::prefix(iter, 3), '.Rdata'))
 		if (!overwrite && simFileExists) {
 
 			omnibus::say(iter, '\U2713', post=0)
@@ -78,7 +78,7 @@ predImportMakeData <- function(
 			# make landscape
 			if (iter == 1 | skippedAny) {
 
-				landscape <<- genesis(geography, circle=circle, size=size, verbose=verbose > 1)
+				landscape <- genesis(geography, circle=circle, size=size, verbose=verbose > 1)
 
 				# map of species' probability of occurrence
 				args <- if (attr(response, 'equationType') == 'logistic') {
@@ -90,7 +90,7 @@ predImportMakeData <- function(
 				}
 					
 			# re-make any random layers for next sim
-			} else if (any(unlist(geography) %in% c('random', 'noisy'))) {
+			} else if (any(unlist(geography) %in% c('random', 'noise'))) {
 				landscape <<- genesis(geography, circle=circle, size=size)
 				speciesMap <- do.call(response, args=args)
 			}
@@ -105,7 +105,7 @@ predImportMakeData <- function(
 
 			# estimate sample size needed to get sufficient presences and absences
 			n <- round(1.5 * (numTrainPres + numTestPres)) # initial number of randomly located sites to draw
-			prev <- cellStats(speciesMap, 'sum')  / ncell(speciesMap) # prevalence (including NA cells)
+			prev <- raster::cellStats(speciesMap, 'sum')  / raster::ncell(speciesMap) # prevalence (including NA cells)
 
 			while (n * prev < numTrainPres + numTestPres | n * (1 - prev) < numTestPres) { n <- round(n * 1.5) }
 
@@ -113,9 +113,9 @@ predImportMakeData <- function(
 			presAbs <- -Inf # initial sum of sampled presences
 			while (sum(presAbs) < numTrainPres + numTestPres | sum(!presAbs) < numTestPres) {
 
-				sites <- sampleRast(x=mask, n=n, adjArea=FALSE, replace=TRUE, prob=FALSE)
-				prOcc <- extract(speciesMap, sites)
-				presAbs <- runif(nrow(sites)) <= prOcc
+				sites <- enmSdm::sampleRast(x=mask, n=n, adjArea=FALSE, replace=TRUE, prob=FALSE)
+				prOcc <- raster::extract(speciesMap, sites)
+				presAbs <- stats::runif(nrow(sites)) <= prOcc
 
 				n <- 1.5 * n
 
@@ -128,24 +128,24 @@ predImportMakeData <- function(
 			testAbsSites <- sites[which(!presAbs), ]
 			testAbsSites <- testAbsSites[sample(1:nrow(testAbsSites), numTestPres), ]
 
-			trainPres <- as.data.frame(extract(landscape, trainPresSites))
-			testPres <- as.data.frame(extract(landscape, testPresSites))
-			testAbs <- as.data.frame(extract(landscape, testAbsSites))
+			trainPres <- as.data.frame(raster::extract(landscape, trainPresSites))
+			testPres <- as.data.frame(raster::extract(landscape, testPresSites))
+			testAbs <- as.data.frame(raster::extract(landscape, testAbsSites))
 
 			# training/test random background sites
-			bgSitesTrain <- sampleRast(x=mask, n=numBg, adjArea=FALSE, replace=TRUE, prob=FALSE)
-			bgEnvTrain <- as.data.frame(extract(landscape, bgSitesTrain))
+			bgSitesTrain <- enmSdm::sampleRast(x=mask, n=numBg, adjArea=FALSE, replace=TRUE, prob=FALSE)
+			bgEnvTrain <- as.data.frame(raster::extract(landscape, bgSitesTrain))
 
 			# compile training data
 			presBg <- data.frame(presBg=c(rep(1, nrow(trainPres)), rep(0, nrow(bgEnvTrain))))
 			trainData <- cbind(presBg, rbind(trainPres, bgEnvTrain))
 
 			# compile test data
-			testBgSites <- sampleRast(x=mask, n=numBg, adjArea=FALSE, replace=TRUE, prob=FALSE)
-			testBg <- as.data.frame(extract(landscape, testBgSites))
+			testBgSites <- enmSdm::sampleRast(x=mask, n=numBg, adjArea=FALSE, replace=TRUE, prob=FALSE)
+			testBg <- as.data.frame(raster::extract(landscape, testBgSites))
 
 			# prevalance
-			prev <- cellStats(speciesMap, 'mean')
+			prev <- raster::cellStats(speciesMap, 'mean')
 
 			# remember
 			sim <- list()
@@ -165,7 +165,7 @@ predImportMakeData <- function(
 			class(sim) <- c('sim', class(sim))
 
 			omnibus::dirCreate(simDir)
-			save(sim, file=paste0(simDir, '/', filePrependEndSpace, 'sim ', prefix(iter, 3), '.Rdata'))
+			save(sim, file=paste0(simDir, '/', filePrependEndSpace, 'sim ', omnibus::prefix(iter, 3), '.Rdata'))
 			gc()
 
 		} # re-create data?

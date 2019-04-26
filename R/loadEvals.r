@@ -22,7 +22,7 @@ loadEvals <- function(evalDir, algos=c('omniscient', 'gam', 'maxent', 'brt'), sa
 		for (algo in algos) {
 
 			omnibus::say(algo)
-			files <- listFiles(evalDir, pattern=toupper(algo))
+			files <- omnibus::listFiles(evalDir, pattern=toupper(algo))
 
 			for (file in files) {
 

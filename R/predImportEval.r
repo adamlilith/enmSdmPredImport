@@ -80,7 +80,7 @@ predImportEval <- function(
 				omnibus::say(iter, post=0)
 		
 				# load simulation data
-				load(paste0(simDir, '/', fileAppendEndSpace, 'sim ', prefix(iter, 3), '.Rdata'))
+				load(paste0(simDir, '/', fileAppendEndSpace, 'sim ', omnibus::prefix(iter, 3), '.Rdata'))
 
 				# variable names
 				vars <- sim$vars
@@ -144,7 +144,7 @@ predImportEval <- function(
 					if (verbose > 1) omnibus::say('multi', post=0)
 					
 					# load model
-					load(paste0(modelDir, '/multivariate ', algo, '/', algo, fileAppendStartSpace, ' model ', prefix(iter, 3), '.Rdata'))
+					load(paste0(modelDir, '/multivariate ', algo, '/', algo, fileAppendStartSpace, ' model ', omnibus::prefix(iter, 3), '.Rdata'))
 					
 					# number of training background sites
 					modelClass <- class(model)
@@ -181,7 +181,7 @@ predImportEval <- function(
 							landscape <- if (iter == 1) {
 								genesis(sim$geography, circle=sim$stats$circle, nrow=sim$stats$landscapeSize)
 							# re-make any random layers for next sim
-							} else if (any(unlist(geography) %in% 'random')) {
+							} else if (any(unlist(sim$geography) %in% c('random', 'noise'))) {
 								genesis(sim$geography, circle=sim$stats$circle, nrow=sim$stats$landscapeSize)
 							}
 							
@@ -195,7 +195,7 @@ predImportEval <- function(
 							predMap <- raster::stretch(predMap, 0, 1)
 							predMap <- round(10 * predMap + 0.5 + .Machine$double.eps)
 							stratSites <- enmSdm::sampleRastStrat(predMap, n=sim$stats$numBg / 10, adjArea=FALSE)
-							stratBgEnv <- as.data.frame(extract(landscape, stratSites))
+							stratBgEnv <- as.data.frame(raster::extract(landscape, stratSites))
 							predStratBg <- enmSdmPredImport::predictModel(model, stratBgEnv, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
 							
 						} # if doing stratified evaluation
@@ -271,7 +271,7 @@ predImportEval <- function(
 							
 							# remember
 							subOut <- data.frame(aucPresAbsPerm, aucPresBgPerm, cbiPerm, corPresAbsPerm, corPresBgPerm)
-							if (strat) subOut <- cbind(subOut, corStratPerm)
+							if (strat) subOut <- cbind(subOut, corStratBgPerm)
 							names(subOut) <- gsub(names(subOut), pattern='Perm', replacement='')
 							names(subOut) <- paste0(names(subOut), 'Multi_perm', thisVar)
 							
@@ -289,7 +289,7 @@ predImportEval <- function(
 						for (thisVar in vars) {
 						
 							subOut <- data.frame(aucPresAbsPerm=NA, aucPresBgPerm=NA, cbiPerm=NA, corPresAbsPerm=NA, corPresBgPerm=NA)
-							if (strat) subOut <- cbind(subOut=NA, corStratPerm=NA)
+							if (strat) subOut <- cbind(subOut=NA, corStratBgPerm=NA)
 							names(subOut) <- gsub(names(subOut), pattern='Perm', replacement='')
 							names(subOut) <- paste0(names(subOut), 'Multi_perm', thisVar)
 							
@@ -384,7 +384,7 @@ predImportEval <- function(
 							if (ia) {
 								
 								if (class(model) != 'logical') {
-									brtIa <- gbm.interactions(model)$interactions
+									brtIa <- dismo::gbm.interactions(model)$interactions
 								} else {
 									brtIa <- matrix(NA, nrow=2, ncol=2)
 									rownames(brtIa) <- colnames(brtIa) <- vars
@@ -456,7 +456,7 @@ predImportEval <- function(
 					if (verbose > 1) omnibus::say('red', post=0)
 					
 					# load model
-					load(paste0(modelDir, '/reduced ', algo, '/', algo, fileAppendStartSpace, ' model ', prefix(iter, 3), '.Rdata'))
+					load(paste0(modelDir, '/reduced ', algo, '/', algo, fileAppendStartSpace, ' model ', omnibus::prefix(iter, 3), '.Rdata'))
 					
 					### OBSERVED: normal
 					####################
@@ -519,7 +519,7 @@ predImportEval <- function(
 					if (verbose > 1) omnibus::say('uni', post=0)
 					
 					# load model
-					load(paste0(modelDir, '/univariate ', algo, '/', algo, fileAppendStartSpace, ' model ', prefix(iter, 3), '.Rdata'))
+					load(paste0(modelDir, '/univariate ', algo, '/', algo, fileAppendStartSpace, ' model ', omnibus::prefix(iter, 3), '.Rdata'))
 					
 					### OBSERVED: normal
 					for (countVar in seq_along(model)) {

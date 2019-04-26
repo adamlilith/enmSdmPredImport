@@ -8,7 +8,7 @@ predImportMakeDataRes(geography, response, simDirNative, simDirSampled,
   numTrainPres = 200, numTestPres = 200, numBg = 10000,
   iters = 1:100, circle = FALSE, sizeNative = 1024,
   sizeSampled = 256, filePrepend = NULL, b0 = NA, b1 = NA,
-  b2 = NA, b11 = NA, b12 = NA, mu1 = NA, sigma1 = NA,
+  b2 = NA, b11 = NA, b12 = NA, mu1 = NA, mu2 = NA, sigma1 = NA,
   sigma2 = NA, rho = NA, overwrite = FALSE, verbose = 1, ...)
 }
 \arguments{
@@ -17,6 +17,8 @@ predImportMakeDataRes(geography, response, simDirNative, simDirSampled,
 \item{response}{A function describing the response of the species to the environment. This must be one of: \code{\link[enmSdmPredImport]{logistic}}, \code{\link[enmSdmPredImport]{logisticShift}}, or \code{\link[enmSdmPredImport]{gaussian}}.}
 
 \item{simDirNative}{Character, path name of directory in which scenario data files are saved. This directory will contain data at the spatial resolution at which species respond to the environment.}
+
+\item{simDirSampled}{Character, path name of directory in which scenario data files are saved. This directory will contain data at the spatial resolution at which predictors are available (which may or may not correspond to the scale at which species respond to the environment).}
 
 \item{numTrainPres}{Positive integer, number of training presences to locate.}
 
@@ -46,6 +48,8 @@ predImportMakeDataRes(geography, response, simDirNative, simDirSampled,
 
 \item{mu1}{Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Mean of variable. Default is \code{NA}.}
 
+\item{mu2}{Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Mean of variable. Default is \code{NA}.}
+
 \item{sigma1}{Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Standard deviation of variable. Default is \code{NA}.}
 
 \item{sigma2}{Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Standard deviation of variable. Default is \code{NA}.}
@@ -57,10 +61,6 @@ predImportMakeDataRes(geography, response, simDirNative, simDirSampled,
 \item{verbose}{Numeric, if 0 then show minimal output, 1 more output, 2 even more, >2 all of it.}
 
 \item{...}{Other arguments (unused).}
-
-\item{simDirNative}{Character, path name of directory in which scenario data files are saved. This directory will contain data at the spatial resolution at which predictors are available (which may or may not correspond to the scale at which species respond to the environment).}
-
-\item{mu2}{Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Mean of variable. Default is \code{NA}.}
 }
 \value{
 Nothing (saves data files to disc).
