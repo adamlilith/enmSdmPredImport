@@ -90,7 +90,7 @@ predImportMakeData <- function(
 				}
 					
 			# re-make any random layers for next sim
-			} else if (any(unlist(geography) %in% 'random')) {
+			} else if (any(unlist(geography) %in% c('random', 'noisy'))) {
 				landscape <<- genesis(geography, circle=circle, size=size)
 				speciesMap <- do.call(response, args=args)
 			}
