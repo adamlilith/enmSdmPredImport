@@ -94,8 +94,7 @@ predImportTrainModels <- function(
 
 					} else if (algo=='bioclim') {
 					
-						bioclimData <- trainData[trainData$presAbs == 1, , drop=FALSE]
-						bioclimData <- as.matrix(bioclimData)
+						bioclimData <- trainData[trainData$presBg == 1, 2:ncol(trainData), drop=FALSE]
 						out <- dismo::bioclim(bioclimData, ...)
 
 					} else if (algo=='glm') {
@@ -175,10 +174,10 @@ predImportTrainModels <- function(
 						out
 					}
 
-					if (!(algo %in% c('omniscient', 'maxent'))) {
+					if (!(algo %in% c('omniscient', 'maxent', 'bioclim'))) {
 						if (!is.na(model)) model$stats$numTrainBg <- thisNumBg
 					}
-					
+
 					omnibus::dirCreate(modelDir, '/multivariate ', algo)
 					fileName <- paste0(modelDir, '/multivariate ', algo, '/', algo, ' ', fileAppendEndSpace, 'model ', omnibus::prefix(iter, 3), '.RData')
 					save(model, file=fileName)
@@ -217,8 +216,7 @@ predImportTrainModels <- function(
 							
 							} else if (algo=='bioclim') {
 							
-								bioclimData <- reducedTrainData[reducedTrainData$presAbs == 1, 2:reducedTrainData, drop=FALSE]
-								bioclimData <- as.matrix(bioclimData)
+								bioclimData <- reducedTrainData[reducedTrainData$presBg == 1, 2:reducedTrainData, drop=FALSE]
 								out <- dismo::bioclim(bioclimData, ...)
 
 							} else if (algo=='glm') {
@@ -299,7 +297,7 @@ predImportTrainModels <- function(
 							
 							names(model)[[count]] <- paste0('sans', vars[count])
 							
-							if (!(algo %in% c('omniscient', 'maxent'))) {
+							if (!(algo %in% c('omniscient', 'maxent', 'bioclim'))) {
 								if (!is.na(model[[count]])) model[[count]]$stats$numTrainBg <- thisNumBg
 							}
 
@@ -345,8 +343,7 @@ predImportTrainModels <- function(
 						# BIOCLIM
 						} else if (algo=='bioclim') {
 						
-							bioclimData <- univarTrainData[univarTrainData$presAbs == 1, vars[count], drop=FALSE]
-							bioclimData <- as.matrix(bioclimData)
+							bioclimData <- univarTrainData[univarTrainData$presBg == 1, vars[count], drop=FALSE]
 							out <- dismo::bioclim(bioclimData, ...)
 
 						# GLM
@@ -436,7 +433,7 @@ predImportTrainModels <- function(
 						
 						names(model)[[count]] <- paste0('only', vars[count])
 
-						if (!(algo %in% c('omniscient', 'maxent'))) {
+						if (!(algo %in% c('omniscient', 'maxent', 'bioclim'))) {
 							if (!is.na(model[[count]])) model[[count]]$stats$numTrainBg <- thisNumBg
 						}
 

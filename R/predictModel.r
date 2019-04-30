@@ -96,8 +96,8 @@ predictModel <- function(model, data, ...) {
 	##################
 	} else if ('Bioclim' %in% modelClass) {
 	
-		dismo::predict(model, data=data, ...)
-	
+		dismo::predict(model, data, ...)
+
 	### Maxent models
 	#################
 	} else if ('MaxEnt' %in% modelClass) {

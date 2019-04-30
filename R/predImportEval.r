@@ -163,7 +163,7 @@ predImportEval <- function(
 					############################################
 					
 					if (!is.na(model) && class(model) != 'logical') {
-						
+
 						# compute observed predictions
 						predPres <- predictModel(model, testPres, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
 						predAbs <- predictModel(model, testAbs, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
@@ -184,7 +184,7 @@ predImportEval <- function(
 							} else if (any(unlist(sim$geography) %in% c('random', 'noise'))) {
 								genesis(sim$geography, circle=sim$stats$circle, nrow=sim$stats$landscapeSize)
 							}
-							
+
 							if ('randomForest' %in% class(model)) {
 								predMap <- landscape[[1]]
 								predMap[] <- enmSdmPredImport::predictModel(model, as.data.frame(landscape))
@@ -202,7 +202,7 @@ predImportEval <- function(
 						
 						### OBSERVED PERFORMANCE
 						########################
-						
+
 						aucPresAbs <- enmSdm::aucWeighted(pres=predPres, bg=predAbs, na.rm=TRUE)
 						aucPresBg <- enmSdm::aucWeighted(pres=predPres, bg=predBg, na.rm=TRUE)
 						cbi <- enmSdm::contBoyce(pres=predPres, bg=predBg, na.rm=TRUE, numBins=1001)
@@ -210,15 +210,15 @@ predImportEval <- function(
 						subOut <- data.frame(aucPresAbs, aucPresBg, cbi)
 						names(subOut) <- c('aucPresAbsMulti', 'aucPresBgMulti', 'cbiMulti')
 						thisPerform <- cbind(thisPerform, subOut)
-						
+
 						### PERMUTATED VARIABLE IMPORTANCE
 						##################################
 
 						if (verbose > 2) omnibus::say('perm', post=0)
-						
+
 						# by EACH VARIABLE
 						for (i in seq_along(vars)) {
-						
+
 							thisVar <- vars[i]
 							if (verbose > 2) omnibus::say(thisVar, post=0)
 							
@@ -231,12 +231,12 @@ predImportEval <- function(
 							
 							# by PERMUTATION
 							for (perm in 1L:perms) {
-								
+
 								# permute presences/absences
 								combo <- statisfactory::sampleAcross(testPres, testAbs, by=thisVar)
 								testPresPerm <- combo$testPres
 								testAbsPerm <- combo$testAbs
-								
+
 								# permute presences/background
 								combo <- statisfactory::sampleAcross(testPres, testBg, by=thisVar)
 								testPresPerm <- combo$testPres
@@ -244,11 +244,11 @@ predImportEval <- function(
 
 								# permute stratified sample
 								if (strat) thisStratBgEnv[ , thisVar] <- sample(thisStratBgEnv[ , thisVar])
-								
+
 								# compute permuted predictions
-								predPresPerm <- enmSdmPredImport::predictModel(model, testPresPerm, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
-								predAbsPerm <- enmSdmPredImport::predictModel(model, testAbsPerm, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
-								predBgPerm <- enmSdmPredImport::predictModel(model, testBgPerm, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
+								predPresPerm <- predictModel(model, testPresPerm, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
+								predAbsPerm <- predictModel(model, testAbsPerm, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
+								predBgPerm <- predictModel(model, testBgPerm, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
 								if (strat) predStratBgPerm <- enmSdmPredImport::predictModel(model, thisStratBgEnv, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
 								
 								# evaluate
