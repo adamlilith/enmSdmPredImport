@@ -7,7 +7,7 @@
 predImportTrainModels(simDir, modelDir, vars, algos = c("omniscient",
   "bioclim", "brt", "gam", "glm", "maxent", "maxnet", "rf"),
   type = c("multivariate", "reduced", "univariate"), iters = 1:100,
-  numBg = NULL, filePrepend = NULL, overwrite = FALSE,
+  numBg = NULL, fileFlag = NULL, overwrite = FALSE,
   tempDir = raster::rasterOptions()$tmpdir, verbose = 1, ...)
 }
 \arguments{
@@ -25,7 +25,7 @@ predImportTrainModels(simDir, modelDir, vars, algos = c("omniscient",
 
 \item{numBg}{Positive integer, vector of positive integers, or \code{NULL}. This is the number of background sites used to train the model. If this is \code{NULL} (default), then the number of background sites will be equal to the number of sites available in the "sim" object created by \code{predImportMakeData}. If this is a single integer, then the background sites used for training will be taken from the first \code{numBg} sites available in the "sim" object. If this is a vector, then it must be the same length as \code{algos}, and each algorithm will then be presented with the respective number of background sites. If the latter, the vector must have names that match the algorithm(s) being used.}
 
-\item{filePrepend}{Either \code{NULL} or a character string. If a character string then this is \emph{pre}-pended to the simulated data file name and each model file name. If \code{NULL} (default), nothing is pre-pended. File names will be as "model XXX.RData" (no append) or "ALGORITHM PREPEND model XXX.RData" where "XXX" is the iteration number, "PREPEND" the string in \code{filePrepend}, and "ALGORITHM" the model algorithm name.}
+\item{fileFlag}{Either \code{NULL} or a character string. If a character string then this is included in the simulated data file name and each model file name. If \code{NULL} (default), nothing is added, so file names will be as "model XXX.RData". If a character string, then the file name will be as "ALGORITHM FLAG model XXX.RData" where "XXX" is the iteration number, "FLAG" the string in \code{fileFlag}, and "ALGORITHM" the model algorithm name.}
 
 \item{overwrite}{Logical, if \code{TRUE} then overwrite existing model results files. Default is \code{FALSE}.}
 

@@ -4,8 +4,8 @@
 \alias{loadEvals}
 \title{Load evaluation files and compile into a single data frame}
 \usage{
-loadEvals(evalDir, algos = c("omniscient", "gam", "maxent", "brt"),
-  save = TRUE, redo = FALSE, verbose = TRUE)
+loadEvals(evalDir, algos = c("omniscient", "bioclim", "brt", "gam",
+  "glm", "maxent", "rf"), save = TRUE, redo = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{evalDir}{Character, name of the \emph{scenario} directory containing evaluation files.}

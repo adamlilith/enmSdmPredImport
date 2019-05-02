@@ -8,7 +8,7 @@ predImportEval(simDir, modelDir, evalDir, algos = c("omniscient",
   "bioclim", "brt", "gam", "glm", "maxent", "maxnet", "rf"),
   type = c("multivariate", "reduced", "univariate"), iters = 1:100,
   perms = 30L, ia = TRUE, strat = FALSE, overwrite = FALSE,
-  filePrepend = NULL, verbose = 1, ...)
+  fileFlag = NULL, userdata = NULL, verbose = 1, ...)
 }
 \arguments{
 \item{simDir}{Character, path name of directory in which scenario data files are saved.}
@@ -31,7 +31,9 @@ predImportEval(simDir, modelDir, evalDir, algos = c("omniscient",
 
 \item{overwrite}{Logical, if \code{TRUE} (default) then write over existing evaluation files..}
 
-\item{filePrepend}{Either \code{NULL} or a character string. If a character string then this is \emph{pre}-pended to the simulated data file name and each model file name and \emph{ap}pended to the evaluation file name. If \code{NULL} (default), nothing is ap/pre-pended. File names will be as "sim XXX.RData" (no append) or "PREPEND sim XXX.RData" where "XXX" is the iteration number and PREPEND the string in \code{filePrepend}.}
+\item{fileFlag}{Either \code{NULL} or a character string. If a character string then this is included in the simulated data file name and each model file name. If \code{NULL} (default), nothing is added, so file names will be as "model XXX.RData". If a character string, then the file name will be as "ALGORITHM FLAG model XXX.RData" where "XXX" is the iteration number, "FLAG" the string in \code{fileFlag}, and "ALGORITHM" the model algorithm name.}
+
+\item{userdata}{Either \code{NULL} or a data frame with extra information a user desires to include in the evaluation data frame output by this function. Note that an argument named \code{userdata} can also be specified in the \code{predImportMakeData} function, which will be stored as part of the \code{sim} object created by that function. This \code{sim}-associated metadata will \emph{also} be included in the evaluation data frame.}
 
 \item{verbose}{Numeric, if 0 then show minimal output, 1 more output, 2 even more, >2 all of it.}
 
