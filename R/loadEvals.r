@@ -9,27 +9,40 @@
 #' @return Data frame.
 #' @export
 
-loadEvals <- function(evalDir, algos=c('omniscient', 'gam', 'maxent', 'brt'), save=TRUE, redo=FALSE, verbose=TRUE) {
+loadEvals <- function(
+	evalDir,
+	algos=c('omniscient', 'bioclim', 'brt', 'gam', 'glm', 'maxent', 'rf'),
+	save=TRUE,
+	redo=FALSE,
+	verbose=TRUE
+) {
 
 	# loads evaluation files and compiles them into a single data frame
-
 	if (!redo & file.exists(paste0(evalDir, '/!Collated Evaluations.RData'))) {
 	
 		load(paste0(evalDir, '/!Collated Evaluations.RData'))
 		
 	} else {
 		
+		# load by algorithm
 		for (algo in algos) {
 
 			omnibus::say(algo)
 			files <- omnibus::listFiles(evalDir, pattern=toupper(algo))
 
+			# load each file
 			for (file in files) {
 
 				if (verbose) omnibus::say(file)
+				
+				# load
 				load(file)
+				
+				# errors
 				if (!exists('perform', inherits=FALSE)) stop('File does not contain a variable named "perform."')
 				if (any(!(perform$algo %in% algo))) stop(paste('Algorithm listed in perform data frame is not the intended algorithm (data frame is for', perform$algo[1], ' (intended algorithm is', algo, ').'))
+								
+				# collate with all data
 				master <- if (!exists('master', inherits=FALSE)) {
 					master <- perform
 				} else {
@@ -37,9 +50,9 @@ loadEvals <- function(evalDir, algos=c('omniscient', 'gam', 'maxent', 'brt'), sa
 				}
 				rm(perform)
 
-			}
+			} # next file
 
-		}
+		} # next algorithm
 
 		master$algo <- as.character(master$algo)
 
@@ -52,7 +65,7 @@ loadEvals <- function(evalDir, algos=c('omniscient', 'gam', 'maxent', 'brt'), sa
 
 		if (save) save(master, file=paste0(evalDir, '!Collated Evaluations.RData'))
 		
-	}
+	} # if loading files from scratch
 		
 	master
 
