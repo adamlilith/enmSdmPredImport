@@ -2,10 +2,9 @@
 % Please edit documentation in R/genesis.r
 \name{genesis}
 \alias{genesis}
-\title{Generate a raster stack representing variables on a landscape.}
+\title{Generate a raster stack representing variables on a landscape}
 \usage{
-genesis(geography, size = 1001, rescale = NULL, circle = TRUE,
-  verbose = FALSE, ...)
+genesis(geography, size = 1001, circle = TRUE, verbose = FALSE, ...)
 }
 \arguments{
 \item{geography}{List object composed of lists, with one list per layer on the landscape. The name of the sublists correspond to the names of the layers to be generated. Each sublist has some of the following components (some are required, some optional).
@@ -47,15 +46,17 @@ genesis(geography, size = 1001, rescale = NULL, circle = TRUE,
 }
 \item \code{rot} (Optional) Numeric, degrees by which to rotate the raster relative to "north". This is useful for manipulating the correlation between layers.
 \item \code{randOrient} (Optional) Logical, if \code{TRUE} then then rotate the raster in a random direction.
-\item \code{noisy} (Optional) Logical, if \code{TRUE} then add random noise by randomly swapping values across cells after the pattern specified by \code{type} has been created. Note that swapping ensures the original frequency distribution of the values of the variable is retained. If used, must also specify a value \code{noisyp} which represents the proportion of cells that have values swapped.
+\item \code{noise} (Optional) Numeric or \code{NULL}, if not equal to 0 or \code{NULL}, add random noise by randomly swapping values across cells after the pattern specified by \code{type} has been created. This element states gives the proportion of cells to swap, so much be in the range [0, 1]. Note that swapping ensures the original frequency distribution of the values of the variable is retained.
 \item \code{split} (Optional) Logical, if \code{TRUE} then before any rotation is performed swap values between the upper left ("northwest") corner and the lower right ("southeast") corners of the raster.
 }}
 
 \item{size}{Positive integer, number of rows/columns in each landscape raster.}
 
-\item{rescale}{Either \code{agg} in which case the \code{link[raster]{aggregate}} function is called after the landscape is created, \emph{or} \code{disagg} in which case the \code{link[raster]{disaggregate}} function is called after the landscape is created, \emph{or} \code{NULL} (default) in which case no dis/aggregation is performed. Arguments to can be passed to \code{aggregate} or \code{disaggregate} using \code{...}.}
-
 \item{circle}{Logical, if \code{TRUE} then the raster stack is cropped to a circle with values outside the circle left as \code{NA}. If \code{FALSE} (default), then the stack is left as a square.}
+
+\item{verbose}{Logical, if \code{TRUE} display progress. Default is \code{FALSE}.}
+
+\item{...}{Other arguments (unused).}
 }
 \value{
 A raster stack.
@@ -68,6 +69,7 @@ geog1 <- list(
 	uniform=list(type='uniform'),
 	random=list(type='random', min=-1, max=1),
 	linear=list(type='linear', min=-1, max=1),
+	linearNoise=list(type='linear', min=-1, max=1, noise=0.3),
 	step=list(type='step', min=-1, max=1, at=0.5),
 	hinge=list(type='hinge', min=-1, max=1, from=-0.5, to=0),
 	gauss=list(type='gaussian', center1=0, center2=0.25,
@@ -75,13 +77,13 @@ geog1 <- list(
 	sine=list(type='sin', freq=2, offset=0, min=-1, max=1)
 )
 
-# circular landscape
-land <- genesis(geography=geog1, size=201)
-plot(land)
-
 # square landscape
 land <- genesis(geography=geog1, size=201, circle=FALSE)
-plot(land)
+raster::plot(land)
+
+# circular landscape
+land <- genesis(geography=geog1, size=201)
+raster::plot(land)
 
 # layer rotation
 geog2 <- list(
@@ -89,7 +91,7 @@ geog2 <- list(
 	x2=list(type='linear', min=-1, max=1, rot=45)
 )
 land <- genesis(geog2, size=201, circle=TRUE)
-plot(land)
+raster::plot(land)
 
 # fancy stuff
 set.seed(123)
@@ -102,5 +104,5 @@ geog3 <- list(
 		randOrient=TRUE)
 )
 land <- genesis(geog3, size=201)
-plot(land)
+raster::plot(land)
 }

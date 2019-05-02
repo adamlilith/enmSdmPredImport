@@ -21,7 +21,7 @@ logisticShift(x1, b0 = 0, b1 = 1, b11 = 0, ...)
 A logistic function.
 }
 \description{
-The univariate logistic function. A variant of \code{\link[snmSdmPredImport]{logistic}}, it returns logistic output in response to one or two variables, but includes an additional term for "shifting" the response to the "left" or "right" along \code{x1}.
+The univariate logistic function. A variant of \code{\link[enmSdmPredImport]{logistic}}, it returns logistic output in response to one or two variables, but includes an additional term for "shifting" the response to the "left" or "right" along \code{x1}.
 }
 \examples{
 x1 <- seq(-1, 1, by=0.01)

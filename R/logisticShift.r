@@ -1,6 +1,6 @@
 #' Univariate logistic function
 #'
-#' The univariate logistic function. A variant of \code{\link[snmSdmPredImport]{logistic}}, it returns logistic output in response to one or two variables, but includes an additional term for "shifting" the response to the "left" or "right" along \code{x1}.
+#' The univariate logistic function. A variant of \code{\link[enmSdmPredImport]{logistic}}, it returns logistic output in response to one or two variables, but includes an additional term for "shifting" the response to the "left" or "right" along \code{x1}.
 #' @param x1 Numeric, first variable.
 #' @param b0 Numeric, intercept. Default is 0.
 #' @param b1 Numeric, slope with respect to \code{x1}. Default is 1.

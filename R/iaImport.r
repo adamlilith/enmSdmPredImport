@@ -1,12 +1,23 @@
 #' Test importance of interaction terms in Maxent or omniscient model
 #' 
 #' @param model Either a MaxEnt object or function object.
-#' @param vars Character vector, names of variables to test interactions of.
+#' @param vars Character vector, names of variables of which to test interactions.
+#' @param sim Object of class \code{sim}.
 #' @param perms Positive integer, number of times to permute data.
 #' @param testPres Data frame with environment at test presence sites.
 #' @param testContrast Data frame with environment at test background or absence sites.
 #' @param predPres Predictions at test presences (if \code{NULL} or not supplied then will be computed).
 #' @param predContrast Predictions at test background or absence sites (if \code{NULL} or not supplied then will be computed).
+#' @param b0 Numeric, parameters for \code{\link[enmSdmPredImport]{logistic}} or \code{\link[enmSdmPredImport]{logisticShift}} function specified in the \code{response} argument (above). Logistic intercept. Default is \code{NA}.
+#' @param b1 Numeric, parameters for \code{\link[enmSdmPredImport]{logistic}} or \code{\link[enmSdmPredImport]{logisticShift}} function specified in the \code{response} argument (above). Logistic slope. Default is \code{NA}.
+#' @param b2 Numeric, parameters for \code{\link[enmSdmPredImport]{logistic}} or \code{\link[enmSdmPredImport]{logisticShift}} function specified in the \code{response} argument (above). Logistic slope. Default is c.
+#' @param b11 Numeric, parameters for \code{\link[enmSdmPredImport]{logistic}} or \code{\link[enmSdmPredImport]{logisticShift}} function specified in the \code{response} argument (above). Left-right shift along variable. Default is \code{NA}.
+#' @param b12 Numeric, parameters for \code{\link[enmSdmPredImport]{logistic}} or \code{\link[enmSdmPredImport]{logisticShift}} function specified in the \code{response} argument (above). Interaction term. Default is \code{NA}.
+#' @param mu1 Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Mean of variable. Default is \code{NA}.
+#' @param mu2 Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Mean of variable. Default is \code{NA}.
+#' @param sigma1 Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Standard deviation of variable. Default is \code{NA}.
+#' @param sigma2 Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Standard deviation of variable. Default is \code{NA}.
+#' @param rho Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Covariance term. Default is \code{NA}.
 #' @param ...	Arguments to pass to \code{predictModel} function.
 #' @return Data frame with values of AUC (area under the receiver-operator curve), CBI (Continuous Boyce Index), and the Pearson correlation coefficient between predictions from the model with data as-observed and predictions with each variable permuted in turn. Permutations an be performed before the values are multiplied or after they are multiplied.
 #' @export
@@ -20,6 +31,7 @@ iaImport <- compiler::cmpfun(function(
 	testContrast,
 	predPres=NULL,
 	predContrast=NULL,
+	b0=NA, b1=NA, b2=NA, b11=NA, b12=NA, mu1=NA, mu2=mu2, sigma1=NA, sigma2=NA, rho=NA,
 	...
 ) {
 
@@ -52,7 +64,7 @@ iaImport <- compiler::cmpfun(function(
 					# test presences and test CONTRAST points: permute BEFORE product
 					permPresContrast <<- if (class(model)=='MaxEnt') {
 						
-						predictMaxEnt(
+						enmSdm::predictMaxEnt(
 							x=model,
 							data=rbind(testPres, testContrast),
 							type='cloglog',
@@ -93,7 +105,7 @@ iaImport <- compiler::cmpfun(function(
 				# remember
 				thisOut <- data.frame(auc, cbi, cor)
 
-				names(thisOut) <- paste0(names(thisOut), '_perm', capIt(permProdRule), paste(vars, collapse=''))
+				names(thisOut) <- paste0(names(thisOut), '_perm', omnibus::capIt(permProdRule), paste(vars, collapse=''))
 				if (permProdRule == 'before') {
 					before <- thisOut
 				} else if (permProdRule == 'after') {

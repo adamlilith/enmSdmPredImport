@@ -5,12 +5,16 @@
 \title{Test importance of interaction terms in Maxent or omniscient model}
 \usage{
 iaImport(model, vars, sim, perms, testPres, testContrast,
-  predPres = NULL, predContrast = NULL, ...)
+  predPres = NULL, predContrast = NULL, b0 = NA, b1 = NA,
+  b2 = NA, b11 = NA, b12 = NA, mu1 = NA, mu2 = mu2,
+  sigma1 = NA, sigma2 = NA, rho = NA, ...)
 }
 \arguments{
 \item{model}{Either a MaxEnt object or function object.}
 
-\item{vars}{Character vector, names of variables to test interactions of.}
+\item{vars}{Character vector, names of variables of which to test interactions.}
+
+\item{sim}{Object of class \code{sim}.}
 
 \item{perms}{Positive integer, number of times to permute data.}
 
@@ -21,6 +25,26 @@ iaImport(model, vars, sim, perms, testPres, testContrast,
 \item{predPres}{Predictions at test presences (if \code{NULL} or not supplied then will be computed).}
 
 \item{predContrast}{Predictions at test background or absence sites (if \code{NULL} or not supplied then will be computed).}
+
+\item{b0}{Numeric, parameters for \code{\link[enmSdmPredImport]{logistic}} or \code{\link[enmSdmPredImport]{logisticShift}} function specified in the \code{response} argument (above). Logistic intercept. Default is \code{NA}.}
+
+\item{b1}{Numeric, parameters for \code{\link[enmSdmPredImport]{logistic}} or \code{\link[enmSdmPredImport]{logisticShift}} function specified in the \code{response} argument (above). Logistic slope. Default is \code{NA}.}
+
+\item{b2}{Numeric, parameters for \code{\link[enmSdmPredImport]{logistic}} or \code{\link[enmSdmPredImport]{logisticShift}} function specified in the \code{response} argument (above). Logistic slope. Default is c.}
+
+\item{b11}{Numeric, parameters for \code{\link[enmSdmPredImport]{logistic}} or \code{\link[enmSdmPredImport]{logisticShift}} function specified in the \code{response} argument (above). Left-right shift along variable. Default is \code{NA}.}
+
+\item{b12}{Numeric, parameters for \code{\link[enmSdmPredImport]{logistic}} or \code{\link[enmSdmPredImport]{logisticShift}} function specified in the \code{response} argument (above). Interaction term. Default is \code{NA}.}
+
+\item{mu1}{Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Mean of variable. Default is \code{NA}.}
+
+\item{mu2}{Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Mean of variable. Default is \code{NA}.}
+
+\item{sigma1}{Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Standard deviation of variable. Default is \code{NA}.}
+
+\item{sigma2}{Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Standard deviation of variable. Default is \code{NA}.}
+
+\item{rho}{Numeric, parameters for \code{\link[enmSdmPredImport]{gaussian}} function specified in the \code{response} argument (above). Covariance term. Default is \code{NA}.}
 
 \item{...}{Arguments to pass to \code{predictModel} function.}
 }

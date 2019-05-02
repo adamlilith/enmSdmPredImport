@@ -9,14 +9,14 @@
 corTest <- compiler::cmpfun(function(x, y) {
 
 	# cull to shortest vector
-	complete <- complete.cases(x, y)
+	complete <- stats::complete.cases(x, y)
 	x <- x[complete]
 	y <- y[complete]
 	
 	out <- if (!all(complete)) {
 		NA
 	} else {
-		cor(x, y, use='complete.obs')
+		stats::cor(x, y, use='complete.obs')
 	}
 	
 	out
