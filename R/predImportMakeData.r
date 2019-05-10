@@ -49,7 +49,7 @@ predImportMakeData <- function(
 	verbose=1,
 	...
 ) {
-
+print('here-inf')
 	if (verbose >= 0) omnibus::say(date(), ' | Creating simulation data for ', max(iters), ' simulations:', post=0)
 
 	# user data
@@ -61,6 +61,9 @@ predImportMakeData <- function(
 	# file prefix
 	filePrependEndSpace <- if (!is.null(fileFlag)) { paste0(fileFlag, ' ') } else { '' }
 
+	# resampling resolution
+	if (is.null(sizeResampled)) sizeResampled <- sizeNative
+	
 	# geography unlisted form
 	geogUnlist <- unlist(geography)
 	geogHasRandom <- any(geogUnlist %in% 'random')
@@ -92,29 +95,22 @@ predImportMakeData <- function(
 				landscapeNative <- genesis(geography, circle=circle, size=sizeNative, verbose=verbose > 1)
 				
 				### resample landscape
-				if (!is.null(sizeResampled)) {
-
-					if (sizeNative == sizeResampled) {
-						landscapeResampled <- landscapeNative
-					} else {
-						
-						# rescale landscape to "SAMPLED" scale at which predictors are available
-						templateSampled <- raster::raster(
-							nrows=sizeResampled,
-							ncols=sizeResampled,
-							crs=raster::projection(landscapeNative),
-							ext=raster::extent(landscapeNative)
-						)
-						
-						landscapeResampled <- raster::resample(landscapeNative, templateSampled, ...)
-
-					}
-				
-				# if not resampling
-				} else {
+				if (sizeNative == sizeResampled) {
 					landscapeResampled <- landscapeNative
-				}
+				} else {
+					
+					# rescale landscape to "SAMPLED" scale at which predictors are available
+					templateSampled <- raster::raster(
+						nrows=sizeResampled,
+						ncols=sizeResampled,
+						crs=raster::projection(landscapeNative),
+						ext=raster::extent(landscapeNative)
+					)
+					
+					landscapeResampled <- raster::resample(landscapeNative, templateSampled, ...)
 
+				}
+				
 				# map of species' probability of occurrence
 				args <- if (attr(response, 'equationType') == 'logistic') {
 					list(x1=landscapeNative[[1]], x2=landscapeNative[[2]], b0=b0, b1=b1, b2=b2, b12=b12)
@@ -196,7 +192,7 @@ predImportMakeData <- function(
 				sigma1=sigma1, sigma2=sigma2,
 				rho=rho
 			)
-			
+
 			if (!is.null(userdata)) stats <- cbind(stats, userdata)
 			
 			sim$stats <- stats

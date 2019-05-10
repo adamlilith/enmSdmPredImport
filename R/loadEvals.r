@@ -63,7 +63,7 @@ loadEvals <- function(
 		}
 		master <- master[order(ranks), ]
 
-		if (save) save(master, file=paste0(evalDir, '!Collated Evaluations.RData'))
+		if (save) save(master, file=paste0(evalDir, '/!Collated Evaluations.RData'))
 		
 	} # if loading files from scratch
 		
