@@ -5,14 +5,14 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "3048653853",
+    "hash" : "3129502787",
     "id" : "B57A76A0",
-    "lastKnownWriteTime" : 1556914096,
-    "last_content_update" : 1556914096063,
+    "lastKnownWriteTime" : 1557508095,
+    "last_content_update" : 1557508095460,
     "path" : "C:/Ecology/Drive/R/enmSdmPredImport/DESCRIPTION",
     "project_path" : "DESCRIPTION",
     "properties" : {
-        "cursorPosition" : "4,16",
+        "cursorPosition" : "3,14",
         "scrollLine" : "3"
     },
     "read_only" : false,
