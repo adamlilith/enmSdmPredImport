@@ -49,7 +49,7 @@ predImportMakeData <- function(
 	verbose=1,
 	...
 ) {
-print('here-inf')
+
 	if (verbose >= 0) omnibus::say(date(), ' | Creating simulation data for ', max(iters), ' simulations:', post=0)
 
 	# user data
@@ -74,6 +74,7 @@ print('here-inf')
 
 		# DO NOT re-create data
 		simFileExists <- file.exists(paste0(simDir, '/', filePrependEndSpace, 'sim ', omnibus::prefix(iter, 3), '.Rdata'))
+
 		if (!overwrite && simFileExists) {
 
 			omnibus::say(iter, '\U2713', post=0)
@@ -86,8 +87,8 @@ print('here-inf')
 			### generate landscape and species
 			##################################
 
-			seed <- as.numeric(Sys.time())
-			set.seed(seed)
+			# seed <- iter
+			# set.seed(seed)
 
 			# make landscape and species
 			if (!exists('landscapeNative', inherits=FALSE) | geogHasRandom | geogHasNoise) {
@@ -177,7 +178,7 @@ print('here-inf')
 			# remember
 			sim <- list()
 			sim$iter <- iter
-			sim$seed <- seed
+			# sim$seed <- seed
 
 			stats <- data.frame(
 				numTrainPres=numTrainPres,

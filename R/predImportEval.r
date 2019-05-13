@@ -171,7 +171,7 @@ predImportEval <- function(
 							
 							if (verbose > 1) omnibus::say('strat', post=0)
 							
-							set.seed(sim$seed)
+							# set.seed(sim$seed)
 							# make landscape
 							landscape <- if (iter == 1) {
 								genesis(sim$geography, circle=sim$stats$circle, nrow=sim$stats$landscapeSize)

@@ -131,7 +131,7 @@ predImportTrainModels <- function(
 
 					} else if (algo=='brt') {
 
-						set.seed(sim$seed)
+						# set.seed(sim$seed)
 
 						out <- enmSdm::trainBrt(
 							data=trainData,
@@ -253,7 +253,7 @@ predImportTrainModels <- function(
 
 							} else if (algo=='brt') {
 						
-								set.seed(sim$seed)
+								# set.seed(sim$seed)
 						
 								out <- enmSdm::trainBrt(
 									data=reducedTrainData,
@@ -385,7 +385,7 @@ predImportTrainModels <- function(
 						# BRTs
 						} else if (algo=='brt') {
 
-							set.seed(sim$seed)
+							# set.seed(sim$seed)
 						
 							out <- enmSdm::trainBrt(
 								data=univarTrainData,
