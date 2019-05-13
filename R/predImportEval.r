@@ -69,7 +69,7 @@ predImportEval <- function(
 				omnibus::say(iter, post=0)
 		
 				# load simulation data
-				simFile <- paste0(simDir, '/', fileFlagEndSpace, 'sim ', omnibus::prefix(iter, 3), '.Rdata')
+				simFile <- paste0(simDir, '/', fileFlagEndSpace, 'sim ', omnibus::prefix(iter, 4), '.Rdata')
 				load(simFile)
 				
 				# variable names
@@ -139,7 +139,7 @@ predImportEval <- function(
 					if (verbose > 1) omnibus::say('multi', post=0)
 					
 					# load model
-					load(paste0(modelDir, '/multivariate ', algo, '/', algo, fileFlagStartSpace, ' model ', omnibus::prefix(iter, 3), '.Rdata'))
+					load(paste0(modelDir, '/multivariate ', algo, '/', algo, fileFlagStartSpace, ' model ', omnibus::prefix(iter, 4), '.Rdata'))
 					
 					# number of training background sites
 					modelClass <- class(model)
@@ -451,7 +451,7 @@ predImportEval <- function(
 					if (verbose > 1) omnibus::say('red', post=0)
 					
 					# load model
-					load(paste0(modelDir, '/reduced ', algo, '/', algo, fileFlagStartSpace, ' model ', omnibus::prefix(iter, 3), '.Rdata'))
+					load(paste0(modelDir, '/reduced ', algo, '/', algo, fileFlagStartSpace, ' model ', omnibus::prefix(iter, 4), '.Rdata'))
 					
 					### OBSERVED: normal
 					####################
@@ -514,7 +514,7 @@ predImportEval <- function(
 					if (verbose > 1) omnibus::say('uni', post=0)
 					
 					# load model
-					load(paste0(modelDir, '/univariate ', algo, '/', algo, fileFlagStartSpace, ' model ', omnibus::prefix(iter, 3), '.Rdata'))
+					load(paste0(modelDir, '/univariate ', algo, '/', algo, fileFlagStartSpace, ' model ', omnibus::prefix(iter, 4), '.Rdata'))
 					
 					### OBSERVED: normal
 					for (countVar in seq_along(model)) {

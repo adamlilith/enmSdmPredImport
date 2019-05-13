@@ -73,14 +73,10 @@ predImportMakeData <- function(
 	for (iter in iters) {
 
 		# DO NOT re-create data
-		simFileExists <- file.exists(paste0(simDir, '/', filePrependEndSpace, 'sim ', omnibus::prefix(iter, 3), '.Rdata'))
-
-		if (!overwrite && simFileExists) {
-
-			omnibus::say(iter, '\U2713', post=0)
+		simFileExists <- file.exists(paste0(simDir, '/', filePrependEndSpace, 'sim ', omnibus::prefix(iter, 4), '.Rdata'))
 
 		# RE-CREATE DATA
-		} else {
+		if (overwrite | (!overwrite & !simFileExists)) {
 
 			if (verbose > 0) omnibus::say(iter, post=0)
 
@@ -209,7 +205,7 @@ predImportMakeData <- function(
 			class(sim) <- c('sim', class(sim))
 
 			omnibus::dirCreate(simDir)
-			save(sim, file=paste0(simDir, '/', filePrependEndSpace, 'sim ', omnibus::prefix(iter, 3), '.Rdata'))
+			save(sim, file=paste0(simDir, '/', filePrependEndSpace, 'sim ', omnibus::prefix(iter, 4), '.RData'))
 			gc()
 
 		} # re-create data?

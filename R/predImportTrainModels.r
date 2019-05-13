@@ -63,7 +63,7 @@ predImportTrainModels <- function(
 			### load training/test data
 			###########################
 			
-			load(paste0(simDir, '/', fileAppendEndSpace, 'sim ', omnibus::prefix(iter, 3), '.Rdata'))
+			load(paste0(simDir, '/', fileAppendEndSpace, 'sim ', omnibus::prefix(iter, 4), '.Rdata'))
 			
 			# select background sites
 			if (is.null(thisNumBg)) thisNumBg <- sim$stats$numBg
@@ -83,7 +83,7 @@ predImportTrainModels <- function(
 				if (verbose > 0) { omnibus::say('| multi', post=0) }
 				
 				# if overwriting models is OK, OR if model doesn't exist
-				fileMissing <- !file.exists(paste0(modelDir, '/multivariate ', algo, '/', algo, ' ', fileAppendEndSpace, 'model ', omnibus::prefix(iter, 3), '.RData'))
+				fileMissing <- !file.exists(paste0(modelDir, '/multivariate ', algo, '/', algo, ' ', fileAppendEndSpace, 'model ', omnibus::prefix(iter, 4), '.RData'))
 				
 				if (overwrite | fileMissing) {
 					
@@ -179,7 +179,7 @@ predImportTrainModels <- function(
 					}
 
 					omnibus::dirCreate(modelDir, '/multivariate ', algo)
-					fileName <- paste0(modelDir, '/multivariate ', algo, '/', algo, ' ', fileAppendEndSpace, 'model ', omnibus::prefix(iter, 3), '.RData')
+					fileName <- paste0(modelDir, '/multivariate ', algo, '/', algo, ' ', fileAppendEndSpace, 'model ', omnibus::prefix(iter, 4), '.RData')
 					save(model, file=fileName)
 					rm(model); gc()
 
@@ -198,7 +198,7 @@ predImportTrainModels <- function(
 					if (verbose > 0) { omnibus::say('red', post=0) }
 						
 					# if overwriting models OK OR model doesn't exist
-					fileMissing <- !file.exists(paste0(modelDir, '/reduced ', algo, '/', algo, fileAppendStartSpace, ' model ', omnibus::prefix(iter, 3), '.Rdata'))
+					fileMissing <- !file.exists(paste0(modelDir, '/reduced ', algo, '/', algo, fileAppendStartSpace, ' model ', omnibus::prefix(iter, 4), '.Rdata'))
 					if (overwrite | fileMissing) {
 						
 						model <- list()
@@ -304,7 +304,7 @@ predImportTrainModels <- function(
 						} # next reduced model
 					
 						omnibus::dirCreate(modelDir, '/reduced ', algo)
-						fileName <- paste0(modelDir, '/reduced ', algo, '/', algo, fileAppendStartSpace, ' model ', omnibus::prefix(iter, 3), '.Rdata')
+						fileName <- paste0(modelDir, '/reduced ', algo, '/', algo, fileAppendStartSpace, ' model ', omnibus::prefix(iter, 4), '.Rdata')
 						save(model, file=fileName)
 						rm(model); gc()
 						
@@ -323,7 +323,7 @@ predImportTrainModels <- function(
 				if (verbose > 0) { omnibus::say('uni', post=0) }
 				
 				# if overwriting models OK OR model doesn't exist
-				if (overwrite | !file.exists(paste0(modelDir, '/univariate ', algo, '/', algo, ' ', fileAppendEndSpace, 'model ', omnibus::prefix(iter, 3), '.RData'))) {
+				if (overwrite | !file.exists(paste0(modelDir, '/univariate ', algo, '/', algo, ' ', fileAppendEndSpace, 'model ', omnibus::prefix(iter, 4), '.RData'))) {
 
 					model <- list()
 					
@@ -440,7 +440,7 @@ predImportTrainModels <- function(
 					} # next univariate model
 
 					omnibus::dirCreate(modelDir, '/univariate ', algo)
-					fileName <- paste0(modelDir, '/univariate ', algo, '/', algo, ' ', fileAppendEndSpace, 'model ', omnibus::prefix(iter, 3), '.RData')
+					fileName <- paste0(modelDir, '/univariate ', algo, '/', algo, ' ', fileAppendEndSpace, 'model ', omnibus::prefix(iter, 4), '.RData')
 					save(model, file=fileName)
 					rm(model); gc()
 					
