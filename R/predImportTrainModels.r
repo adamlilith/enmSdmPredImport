@@ -41,7 +41,7 @@ predImportTrainModels <- function(
 	
 	for (algo in algos) {
 
-		if (verbose >= 0) omnibus::say(date(), ' | Modeling: ', toupper(algo), post=0)
+		if (verbose >= 0) omnibus::say(date(), ' | Modeling with ', toupper(algo), post=0)
 
 		thisNumBg <- if (is.null(numBg)) {
 			NULL
@@ -55,7 +55,7 @@ predImportTrainModels <- function(
 		for (iter in iters) {
 
 			if (verbose==1) {
-				omnibus::say('|', iter, post=0)
+				omnibus::say('| ', iter, post=0)
 			} else if (verbose > 1) {
 				omnibus::say(date(), ' | ', toupper(algo), ' | iteration ', iter, post=0, pre=1)
 			}
