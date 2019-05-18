@@ -2,7 +2,7 @@
 #' 
 #' Bivariate Gaussian function useful for simulating the response of a species to two environmental variables. The function is standardized so that it yields a value of 1 when the covariates are at their "optimal" values. The default values produce a univariate Gaussian function centered on 0 with unit variance.
 #' @param x1 Numeric, values of the first variable.
-#' @param x2, Numeric, values of the second variable.
+#' @param x2, Numeric, values of the second variable. Default is 0, in which case only response to \code{x1} is returned.
 #' @param mu1 Numeric, mean of \code{x1} in a Gaussian function. The maximum value of the function with respect to \code{x1} occurs at this value of \code{x1}.
 #' @param mu2 Numeric, mean of \code{x2} in a Gaussian function. The maximum value of the function with respect to \code{x2} occurs at this value of \code{x2}.
 #' @param sigma1 Numeric, standard deviation of \code{x1} in a Gaussian function. Scales the width of the response to \code{x1}.

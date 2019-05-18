@@ -10,7 +10,7 @@ gaussian(x1, x2 = 0, mu1 = 0, mu2 = 0, sigma1 = 1, sigma2 = 0,
 \arguments{
 \item{x1}{Numeric, values of the first variable.}
 
-\item{x2, }{Numeric, values of the second variable.}
+\item{x2, }{Numeric, values of the second variable. Default is 0, in which case only response to \code{x1} is returned.}
 
 \item{mu1}{Numeric, mean of \code{x1} in a Gaussian function. The maximum value of the function with respect to \code{x1} occurs at this value of \code{x1}.}
 

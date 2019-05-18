@@ -93,7 +93,7 @@
 
 genesis <- function(
 	geography,
-	size=1001,
+	size=1024,
 	circle=TRUE,
 	verbose=FALSE,
 	...
@@ -110,11 +110,12 @@ genesis <- function(
 	template <- ifelse(dist <= 1, 1, NA)
 	template <- raster::raster(template)
 
+	if (verbose) omnibus::say('Creating landscape layer: ', post=0)
+	
 	# generate each raster or obtain from disk
-	# for (i in seq_along(geography)) {
 	for (i in seq_along(geography)) {
 
-		if (verbose) omnibus::say('Creating landscape layer ', i)
+		if (verbose) omnibus::say(i, ' (type: ', geography[[i]]$type, ')', post=0)
 	
 		if (any(names(unlist(geography[[i]])) %in% 'pregen')) {
 			
@@ -156,7 +157,7 @@ genesis <- function(
 		
 			# random values
 			} else if (geography[[i]]$type=='random') {
-			
+
 				matrix(stats::runif(n=size^2, min=geography[[i]]$min, max=geography[[i]]$max), nrow=size)
 
 			# linear
@@ -226,6 +227,8 @@ genesis <- function(
 	# name landscape
 	names(landscape) <- names(geography)
 	
+	if (verbose) omnibus::say('')
+		
 	landscape
 	
 }

@@ -96,7 +96,12 @@ predImportEval <- function(
 					iter = sim$iter,
 					algo = algo,
 					perms = perms,
-					response = attributes(sim$response)$equationType,
+					trainDataType = 'presence/background',
+					functionalResponse = attributes(sim$response)$equationType,
+					numTrainPres = sim$stats$numTrainPres,
+					numTrainAbs = sim$stats$numTrainAbs,
+					numTestPres = sim$stats$numTestPres,
+					numTestAbs = sim$stats$numTestAbs,
 					numTestBg = sim$stats$numBg
 				)
 				
@@ -171,7 +176,6 @@ predImportEval <- function(
 							
 							if (verbose > 1) omnibus::say('strat', post=0)
 							
-							# set.seed(sim$seed)
 							# make landscape
 							landscape <- if (iter == 1) {
 								genesis(sim$geography, circle=sim$stats$circle, nrow=sim$stats$landscapeSize)

@@ -5,11 +5,12 @@
 \title{Master function to create common sets of data for simulations}
 \usage{
 predImportMakeData(geography, response, simDir, numTrainPres = 200,
-  numTestPres = 200, numBg = 10000, iters = 1:100, circle = FALSE,
-  sizeNative = 1024, sizeResampled = NULL, fileFlag = NULL,
-  userdata = NULL, b0 = NA, b1 = NA, b2 = NA, b11 = NA,
-  b12 = NA, mu1 = NA, mu2 = mu2, sigma1 = NA, sigma2 = NA,
-  rho = NA, overwrite = FALSE, verbose = 1, ...)
+  numTrainAbs = 200, numTestPres = 200, numTestAbs = 200,
+  numBg = 10000, iters = 1:100, circle = FALSE, sizeNative = 1024,
+  sizeResampled = NULL, fileFlag = NULL, userdata = NULL, b0 = NA,
+  b1 = NA, b2 = NA, b11 = NA, b12 = NA, mu1 = NA, mu2 = mu2,
+  sigma1 = NA, sigma2 = NA, rho = NA, overwrite = FALSE,
+  verbose = 1, ...)
 }
 \arguments{
 \item{geography}{A list of lists describing the simulated environmental layers.  Each sublist pertains to one later. See \code{\link[enmSdmPredImport]{genesis}} for details.}
@@ -20,7 +21,11 @@ predImportMakeData(geography, response, simDir, numTrainPres = 200,
 
 \item{numTrainPres}{Positive integer, number of training presences to locate.}
 
-\item{numTestPres}{Positive integer, number of test presences to locate. The number of test absences will also be equal to this value.}
+\item{numTrainAbs}{Positive integer, number of training absences to locate.}
+
+\item{numTestPres}{Positive integer, number of test presences to locate.}
+
+\item{numTestAbs}{Positive integer, number of test absences to locate.}
 
 \item{numBg}{Positive integer, number of training and number of test background sites to locate.}
 
