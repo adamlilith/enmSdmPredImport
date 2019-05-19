@@ -69,7 +69,7 @@ predImportEval <- function(
 				omnibus::say(iter, post=0)
 		
 				# load simulation data
-				simFile <- paste0(simDir, '/', fileFlagEndSpace, 'sim ', omnibus::prefix(iter, 3), '.Rdata')
+				simFile <- paste0(simDir, '/', fileFlagEndSpace, 'sim ', omnibus::prefix(iter, 4), '.Rdata')
 				load(simFile)
 				
 				# variable names
@@ -96,8 +96,7 @@ predImportEval <- function(
 					iter = sim$iter,
 					algo = algo,
 					perms = perms,
-					response = attributes(sim$response)$equationType,
-					numTestBg = sim$stats$numBg
+					trainDataType = 'presence/background'
 				)
 				
 				thisPerform <- cbind(thisPerform, sim$stats)
@@ -139,7 +138,7 @@ predImportEval <- function(
 					if (verbose > 1) omnibus::say('multi', post=0)
 					
 					# load model
-					load(paste0(modelDir, '/multivariate ', algo, '/', algo, fileFlagStartSpace, ' model ', omnibus::prefix(iter, 3), '.Rdata'))
+					load(paste0(modelDir, '/multivariate ', algo, '/', algo, fileFlagStartSpace, ' model ', omnibus::prefix(iter, 4), '.Rdata'))
 					
 					# number of training background sites
 					modelClass <- class(model)
@@ -171,7 +170,6 @@ predImportEval <- function(
 							
 							if (verbose > 1) omnibus::say('strat', post=0)
 							
-							set.seed(sim$seed)
 							# make landscape
 							landscape <- if (iter == 1) {
 								genesis(sim$geography, circle=sim$stats$circle, nrow=sim$stats$landscapeSize)
@@ -451,7 +449,7 @@ predImportEval <- function(
 					if (verbose > 1) omnibus::say('red', post=0)
 					
 					# load model
-					load(paste0(modelDir, '/reduced ', algo, '/', algo, fileFlagStartSpace, ' model ', omnibus::prefix(iter, 3), '.Rdata'))
+					load(paste0(modelDir, '/reduced ', algo, '/', algo, fileFlagStartSpace, ' model ', omnibus::prefix(iter, 4), '.Rdata'))
 					
 					### OBSERVED: normal
 					####################
@@ -514,7 +512,7 @@ predImportEval <- function(
 					if (verbose > 1) omnibus::say('uni', post=0)
 					
 					# load model
-					load(paste0(modelDir, '/univariate ', algo, '/', algo, fileFlagStartSpace, ' model ', omnibus::prefix(iter, 3), '.Rdata'))
+					load(paste0(modelDir, '/univariate ', algo, '/', algo, fileFlagStartSpace, ' model ', omnibus::prefix(iter, 4), '.Rdata'))
 					
 					### OBSERVED: normal
 					for (countVar in seq_along(model)) {

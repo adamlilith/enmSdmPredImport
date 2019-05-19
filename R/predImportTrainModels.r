@@ -41,7 +41,7 @@ predImportTrainModels <- function(
 	
 	for (algo in algos) {
 
-		if (verbose >= 0) omnibus::say(date(), ' | Modeling: ', toupper(algo), ' |', post=0)
+		if (verbose >= 0) omnibus::say(date(), ' | Modeling with ', toupper(algo), post=0)
 
 		thisNumBg <- if (is.null(numBg)) {
 			NULL
@@ -51,39 +51,39 @@ predImportTrainModels <- function(
 			numBg[[algo]]
 		}
 	
-		# for each iteration sample landscape, train model, and evaluate
+		# by ITERATION
 		for (iter in iters) {
 
 			if (verbose==1) {
-				omnibus::say(iter, post=0)
+				omnibus::say('| ', iter, post=0)
 			} else if (verbose > 1) {
-				omnibus::say(date(), ' | ', toupper(algo), ' | simulation ', iter, post=0, pre=1)
+				omnibus::say(date(), ' | ', toupper(algo), ' | iteration ', iter, post=0, pre=1)
 			}
 
 			### load training/test data
 			###########################
 			
-			load(paste0(simDir, '/', fileAppendEndSpace, 'sim ', omnibus::prefix(iter, 3), '.Rdata'))
+			load(paste0(simDir, '/', fileAppendEndSpace, 'sim ', omnibus::prefix(iter, 4), '.Rdata'))
 			
 			# select background sites
 			if (is.null(thisNumBg)) thisNumBg <- sim$stats$numBg
 			
-			trainPres <- sim$trainData[sim$trainData$presBg == 1, c('presBg', vars)]
-			trainBg <- sim$trainData[sim$trainData$presBg == 0, c('presBg', vars)]
+			trainPres <- sim$trainDataPresBg[sim$trainDataPresBg$presBg == 1, c('presBg', vars)]
+			trainBg <- sim$trainDataPresBg[sim$trainDataPresBg$presBg == 0, c('presBg', vars)]
 			
 			if (thisNumBg > nrow(trainBg)) stop('The "sim" object does not contain the desired number of training background sites (see argument "numBg").')
 			
 			trainBg <- trainBg[1:thisNumBg, ]
-			trainData <- rbind(trainPres, trainBg)
+			trainDataPresBg <- rbind(trainPres, trainBg)
 			
 			### train MULTIVARIATE models
 			#############################
 			if ('multivariate' %in% type) {
 				
-				if (verbose > 0) { omnibus::say('| multi', post=0) }
+				if (verbose > 0) { omnibus::say('multi', post=0) }
 				
 				# if overwriting models is OK, OR if model doesn't exist
-				fileMissing <- !file.exists(paste0(modelDir, '/multivariate ', algo, '/', algo, ' ', fileAppendEndSpace, 'model ', omnibus::prefix(iter, 3), '.RData'))
+				fileMissing <- !file.exists(paste0(modelDir, '/multivariate ', algo, '/', algo, ' ', fileAppendEndSpace, 'model ', omnibus::prefix(iter, 4), '.RData'))
 				
 				if (overwrite | fileMissing) {
 					
@@ -94,15 +94,15 @@ predImportTrainModels <- function(
 
 					} else if (algo=='bioclim') {
 					
-						bioclimData <- trainData[trainData$presBg == 1, 2:ncol(trainData), drop=FALSE]
+						bioclimData <- trainDataPresBg[trainDataPresBg$presBg == 1, vars, drop=FALSE]
 						out <- dismo::bioclim(bioclimData, ...)
 
 					} else if (algo=='glm') {
 					
 						out <- enmSdm::trainGlm(
-							data=trainData,
+							data=trainDataPresBg,
 							resp='presBg',
-							preds=names(trainData)[2:ncol(trainData)],
+							preds=vars,
 							construct=FALSE,
 							verbose=verbose > 2,
 							...
@@ -111,9 +111,9 @@ predImportTrainModels <- function(
 					} else if (algo=='maxent') {
 					
 						out <- enmSdm::trainMaxEnt(
-							data=trainData,
+							data=trainDataPresBg,
 							resp='presBg',
-							preds=names(trainData)[2:ncol(trainData)],
+							preds=vars,
 							scratchDir=tempDir,
 							verbose=(verbose > 2),
 							...
@@ -122,21 +122,19 @@ predImportTrainModels <- function(
 					} else if (algo=='maxnet') {
 					
 						out <- enmSdm::trainMaxNet(
-							data=trainData,
+							data=trainDataPresBg,
 							resp='presBg',
-							preds=names(trainData)[2:ncol(trainData)],
+							preds=vars,
 							verbose=(verbose > 2),
 							...
 						)
 
 					} else if (algo=='brt') {
 
-						set.seed(sim$seed)
-
 						out <- enmSdm::trainBrt(
-							data=trainData,
+							data=trainDataPresBg,
 							resp='presBg',
-							preds=names(trainData)[2:ncol(trainData)],
+							preds=vars,
 							w=TRUE,
 							verbose=(verbose > 2),
 							...
@@ -145,9 +143,9 @@ predImportTrainModels <- function(
 					} else if (algo=='gam') {
 			
 						out <- enmSdm::trainGam(
-							data=trainData,
+							data=trainDataPresBg,
 							resp='presBg',
-							preds=names(trainData)[2:ncol(trainData)],
+							preds=vars,
 							construct=FALSE,
 							verbose=(verbose > 2),
 							...
@@ -155,12 +153,12 @@ predImportTrainModels <- function(
 						
 					} else if (algo=='rf') {
 			
-						trainData$presBg <- as.factor(trainData$presBg)
+						trainDataPresBg$presBg <- as.factor(trainDataPresBg$presBg)
 
 						out <- enmSdm::trainRf(
-							data=trainData,
+							data=trainDataPresBg,
 							resp='presBg',
-							preds=names(trainData)[2:ncol(trainData)],
+							preds=vars,
 							importance=TRUE,
 							verbose=(verbose > 2),
 							...
@@ -179,7 +177,7 @@ predImportTrainModels <- function(
 					}
 
 					omnibus::dirCreate(modelDir, '/multivariate ', algo)
-					fileName <- paste0(modelDir, '/multivariate ', algo, '/', algo, ' ', fileAppendEndSpace, 'model ', omnibus::prefix(iter, 3), '.RData')
+					fileName <- paste0(modelDir, '/multivariate ', algo, '/', algo, ' ', fileAppendEndSpace, 'model ', omnibus::prefix(iter, 4), '.RData')
 					save(model, file=fileName)
 					rm(model); gc()
 
@@ -195,10 +193,10 @@ predImportTrainModels <- function(
 				
 				if (length(vars) > 2) {
 				
-					if (verbose > 0) { omnibus::say('red', post=0) }
+					if (verbose > 0) { omnibus::say('reduced', post=0) }
 						
 					# if overwriting models OK OR model doesn't exist
-					fileMissing <- !file.exists(paste0(modelDir, '/reduced ', algo, '/', algo, fileAppendStartSpace, ' model ', omnibus::prefix(iter, 3), '.Rdata'))
+					fileMissing <- !file.exists(paste0(modelDir, '/reduced ', algo, '/', algo, fileAppendStartSpace, ' model ', omnibus::prefix(iter, 4), '.Rdata'))
 					if (overwrite | fileMissing) {
 						
 						model <- list()
@@ -206,7 +204,8 @@ predImportTrainModels <- function(
 						# for EACH variable
 						for (count in seq_along(vars)) {
 
-							reducedTrainData <- trainData[ , which(!(names(trainData) %in% vars[count]))]
+							reducedVars <- vars[-count]
+							reducedTrainData <- trainDataPresBg[ , reducedVars, drop=FALSE]
 							
 							if (algo=='omniscient') {
 							
@@ -216,7 +215,7 @@ predImportTrainModels <- function(
 							
 							} else if (algo=='bioclim') {
 							
-								bioclimData <- reducedTrainData[reducedTrainData$presBg == 1, 2:reducedTrainData, drop=FALSE]
+								bioclimData <- reducedTrainData[reducedTrainData$presBg == 1, reducedVars, drop=FALSE]
 								out <- dismo::bioclim(bioclimData, ...)
 
 							} else if (algo=='glm') {
@@ -224,7 +223,7 @@ predImportTrainModels <- function(
 								out <- enmSdm::trainGlm(
 									data=reducedTrainData,
 									resp='presBg',
-									preds=names(reducedTrainData)[2:ncol(reducedTrainData)],
+									preds=reducedVars,
 									construct=FALSE,
 									verbose=verbose > 2,
 									...
@@ -235,7 +234,7 @@ predImportTrainModels <- function(
 								out <- enmSdm::trainMaxEnt(
 									data=reducedTrainData,
 									resp='presBg',
-									preds=names(reducedTrainData)[2:ncol(reducedTrainData)],
+									preds=reducedVars,
 									scratchDir=tempDir,
 									verbose=(verbose > 2),
 									...
@@ -246,19 +245,17 @@ predImportTrainModels <- function(
 								out <- enmSdm::trainMaxNet(
 									data=reducedTrainData,
 									resp='presBg',
-									preds=names(reducedTrainData)[2:ncol(reducedTrainData)],
+									preds=reducedVars,
 									verbose=(verbose > 2),
 									...
 								)
 
 							} else if (algo=='brt') {
 						
-								set.seed(sim$seed)
-						
 								out <- enmSdm::trainBrt(
 									data=reducedTrainData,
 									resp='presBg',
-									preds=names(reducedTrainData)[2:ncol(reducedTrainData)],
+									preds=reducedVars,
 									verbose=(verbose > 2),
 									...
 								)
@@ -268,7 +265,7 @@ predImportTrainModels <- function(
 								out <- enmSdm::trainGam(
 									data=reducedTrainData,
 									resp='presBg',
-									preds=names(reducedTrainData)[2:ncol(reducedTrainData)],
+									preds=reducedVars,
 									construct=FALSE,
 									verbose=(verbose > 2),
 									...
@@ -281,7 +278,7 @@ predImportTrainModels <- function(
 								out <- enmSdm::trainRf(
 									data=reducedTrainData,
 									resp='presBg',
-									preds=names(reducedTrainData)[2:ncol(reducedTrainData)],
+									preds=reducedVars,
 									importance=TRUE,
 									verbose=(verbose > 2),
 									...
@@ -304,7 +301,7 @@ predImportTrainModels <- function(
 						} # next reduced model
 					
 						omnibus::dirCreate(modelDir, '/reduced ', algo)
-						fileName <- paste0(modelDir, '/reduced ', algo, '/', algo, fileAppendStartSpace, ' model ', omnibus::prefix(iter, 3), '.Rdata')
+						fileName <- paste0(modelDir, '/reduced ', algo, '/', algo, fileAppendStartSpace, ' model ', omnibus::prefix(iter, 4), '.Rdata')
 						save(model, file=fileName)
 						rm(model); gc()
 						
@@ -320,10 +317,10 @@ predImportTrainModels <- function(
 			###########################
 			if ('univariate' %in% type) {
 				
-				if (verbose > 0) { omnibus::say('uni', post=0) }
+				if (verbose > 0) { omnibus::say('univar', post=0) }
 				
 				# if overwriting models OK OR model doesn't exist
-				if (overwrite | !file.exists(paste0(modelDir, '/univariate ', algo, '/', algo, ' ', fileAppendEndSpace, 'model ', omnibus::prefix(iter, 3), '.RData'))) {
+				if (overwrite | !file.exists(paste0(modelDir, '/univariate ', algo, '/', algo, ' ', fileAppendEndSpace, 'model ', omnibus::prefix(iter, 4), '.RData'))) {
 
 					model <- list()
 					
@@ -331,7 +328,8 @@ predImportTrainModels <- function(
 					
 						if (verbose > 1) { omnibus::say(vars[count], post=0) }
 					
-						univarTrainData <- trainData[ , c('presBg', vars[count])]
+						univarVar <- vars[count]
+						univarTrainData <- trainDataPresBg[ , c('presBg', univarVar)]
 
 						# omniscient model
 						if (algo=='omniscient') {
@@ -343,7 +341,7 @@ predImportTrainModels <- function(
 						# BIOCLIM
 						} else if (algo=='bioclim') {
 						
-							bioclimData <- univarTrainData[univarTrainData$presBg == 1, vars[count], drop=FALSE]
+							bioclimData <- univarTrainData[univarTrainData$presBg == 1, univarVar, drop=FALSE]
 							out <- dismo::bioclim(bioclimData, ...)
 
 						# GLM
@@ -352,7 +350,7 @@ predImportTrainModels <- function(
 							out <- enmSdm::trainGlm(
 								data=univarTrainData,
 								resp='presBg',
-								preds=names(univarTrainData)[2:ncol(univarTrainData)],
+								preds=univarVar,
 								construct=FALSE,
 								select=TRUE,
 								verbose=verbose > 2,
@@ -365,7 +363,7 @@ predImportTrainModels <- function(
 							out <- enmSdm::trainMaxEnt(
 								data=univarTrainData,
 								resp='presBg',
-								preds=names(univarTrainData)[2:ncol(univarTrainData)],
+								preds=univarVar,
 								scratchDir=tempDir,
 								verbose=(verbose > 2),
 								...
@@ -377,7 +375,7 @@ predImportTrainModels <- function(
 							out <- enmSdm::trainMaxNet(
 								data=univarTrainData,
 								resp='presBg',
-								preds=vars[count],
+								preds=univarVar,
 								verbose=(verbose > 2),
 								...
 							)
@@ -385,12 +383,10 @@ predImportTrainModels <- function(
 						# BRTs
 						} else if (algo=='brt') {
 
-							set.seed(sim$seed)
-						
 							out <- enmSdm::trainBrt(
 								data=univarTrainData,
 								resp='presBg',
-								preds=names(univarTrainData)[2:ncol(univarTrainData)],
+								preds=univarVar,
 								w=TRUE,
 								verbose=(verbose > 2),
 								...
@@ -402,7 +398,7 @@ predImportTrainModels <- function(
 							out <- enmSdm::trainGam(
 								data=univarTrainData,
 								resp='presBg',
-								preds=names(univarTrainData)[2:ncol(univarTrainData)],
+								preds=univarVar,
 								construct=FALSE,
 								select=FALSE,
 								verbose=(verbose > 2),
@@ -417,7 +413,7 @@ predImportTrainModels <- function(
 							out <- enmSdm::trainRf(
 								data=univarTrainData,
 								resp='presBg',
-								preds=names(univarTrainData)[2:ncol(univarTrainData)],
+								preds=univarVar,
 								importance=FALSE,
 								verbose=(verbose > 2),
 								...
@@ -431,7 +427,7 @@ predImportTrainModels <- function(
 							FALSE
 						}
 						
-						names(model)[[count]] <- paste0('only', vars[count])
+						names(model)[[count]] <- paste0('only', univarVar)
 
 						if (!(algo %in% c('omniscient', 'maxent', 'bioclim'))) {
 							if (!is.na(model[[count]])) model[[count]]$stats$numTrainBg <- thisNumBg
@@ -440,7 +436,7 @@ predImportTrainModels <- function(
 					} # next univariate model
 
 					omnibus::dirCreate(modelDir, '/univariate ', algo)
-					fileName <- paste0(modelDir, '/univariate ', algo, '/', algo, ' ', fileAppendEndSpace, 'model ', omnibus::prefix(iter, 3), '.RData')
+					fileName <- paste0(modelDir, '/univariate ', algo, '/', algo, ' ', fileAppendEndSpace, 'model ', omnibus::prefix(iter, 4), '.RData')
 					save(model, file=fileName)
 					rm(model); gc()
 					

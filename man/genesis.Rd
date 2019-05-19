@@ -4,7 +4,7 @@
 \alias{genesis}
 \title{Generate a raster stack representing variables on a landscape}
 \usage{
-genesis(geography, size = 1001, circle = TRUE, verbose = FALSE, ...)
+genesis(geography, size = 1024, circle = TRUE, verbose = FALSE, ...)
 }
 \arguments{
 \item{geography}{List object composed of lists, with one list per layer on the landscape. The name of the sublists correspond to the names of the layers to be generated. Each sublist has some of the following components (some are required, some optional).

@@ -5,7 +5,9 @@
 #' @param response A function describing the response of the species to the environment. This must be one of: \code{\link[enmSdmPredImport]{logistic}}, \code{\link[enmSdmPredImport]{logisticShift}}, or \code{\link[enmSdmPredImport]{gaussian}}.
 #' @param simDir Character, path name of directory in which scenario data files are saved.
 #' @param numTrainPres Positive integer, number of training presences to locate.
-#' @param numTestPres Positive integer, number of test presences to locate. The number of test absences will also be equal to this value.
+#' @param numTrainAbs Positive integer, number of training absences to locate.
+#' @param numTestPres Positive integer, number of test presences to locate.
+#' @param numTestAbs Positive integer, number of test absences to locate.
 #' @param numBg Positive integer, number of training and number of test background sites to locate.
 #' @param iters Vector of positive integers, data iterations to generate.
 #' @param circle Logical, if \code{FALSE} (default), all landscapes are square. If \code{TRUE} then landscapes are circular.
@@ -36,7 +38,9 @@ predImportMakeData <- function(
 	response,
 	simDir,
 	numTrainPres=200,
+	numTrainAbs=200,
 	numTestPres=200,
+	numTestAbs=200,
 	numBg=10000,
 	iters=1:100,
 	circle=FALSE,
@@ -49,7 +53,7 @@ predImportMakeData <- function(
 	verbose=1,
 	...
 ) {
-print('here-inf')
+
 	if (verbose >= 0) omnibus::say(date(), ' | Creating simulation data for ', max(iters), ' simulations:', post=0)
 
 	# user data
@@ -73,27 +77,21 @@ print('here-inf')
 	for (iter in iters) {
 
 		# DO NOT re-create data
-		simFileExists <- file.exists(paste0(simDir, '/', filePrependEndSpace, 'sim ', omnibus::prefix(iter, 3), '.Rdata'))
-		if (!overwrite && simFileExists) {
-
-			omnibus::say(iter, '\U2713', post=0)
+		simFileExists <- file.exists(paste0(simDir, '/', filePrependEndSpace, 'sim ', omnibus::prefix(iter, 4), '.Rdata'))
 
 		# RE-CREATE DATA
-		} else {
+		if (overwrite | (!overwrite & !simFileExists)) {
 
 			if (verbose > 0) omnibus::say(iter, post=0)
 
 			### generate landscape and species
 			##################################
 
-			seed <- as.numeric(Sys.time())
-			set.seed(seed)
-
 			# make landscape and species
 			if (!exists('landscapeNative', inherits=FALSE) | geogHasRandom | geogHasNoise) {
 
 				landscapeNative <- genesis(geography, circle=circle, size=sizeNative, verbose=verbose > 1)
-				
+
 				### resample landscape
 				if (sizeNative == sizeResampled) {
 					landscapeResampled <- landscapeNative
@@ -112,17 +110,33 @@ print('here-inf')
 				}
 				
 				# map of species' probability of occurrence
-				args <- if (attr(response, 'equationType') == 'logistic') {
-					list(x1=landscapeNative[[1]], x2=landscapeNative[[2]], b0=b0, b1=b1, b2=b2, b12=b12)
-				} else if (attr(response, 'equationType') == 'logisticShift') {
-					list(x1=landscapeNative[[1]], x2=landscapeNative[[2]], b0=b0, b1=b1, b11=b11)
-				} else if (attr(response, 'equationType') == 'gaussian') {
-					list(x1=landscapeNative[[1]], x2=landscapeNative[[2]], mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
+				landNames <- names(landscapeNative)
+				x1index <- which(landNames %in% 'T1')
+				x2index <- which(landNames %in% 'T2')
+
+				x1 <- if (length(x1index) == 0) {
+					0
+				} else {
+					landscapeNative[[x1index]]
 				}
-					
-				speciesMap <- do.call(response, args=args)
 				
-			}			
+				x2 <- if (length(x2index) == 0) {
+					0
+				} else {
+					landscapeNative[[x2index]]
+				}
+
+				args <- if (attr(response, 'equationType') == 'logistic') {
+					list(x1=x1, x2=x2, b0=b0, b1=b1, b2=b2, b12=b12)
+				} else if (attr(response, 'equationType') == 'logisticShift') {
+					list(x1=x1, x2=x2, b0=b0, b1=b1, b11=b11)
+				} else if (attr(response, 'equationType') == 'gaussian') {
+					list(x1=x1, x2=x2, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
+				}
+
+				speciesMap <- do.call(response, args=args)
+
+			}
 
 			### generate training/test and background sites
 			###############################################
@@ -134,38 +148,47 @@ print('here-inf')
 			n <- round(1.5 * (numTrainPres + numTestPres)) # initial number of randomly located sites to draw
 			prev <- raster::cellStats(speciesMap, 'sum')  / raster::ncell(speciesMap) # prevalence (including NA cells)
 
-			while (n * prev < numTrainPres + numTestPres | n * (1 - prev) < numTestPres) { n <- round(n * 1.5) }
+			while (n * prev < numTrainPres + numTestPres | n * (1 - prev) < numTrainAbs + numTestAbs) { n <- round(1.5 * n) }
 
-			# draw sites
-			presAbs <- -Inf # initial sum of sampled presences
-			while (sum(presAbs) < numTrainPres + numTestPres | sum(!presAbs) < numTestPres) {
+			# draw presence/absence sites
+			numPres <- numAbs <- -Inf # initial sum of sampled presences
+			while (numPres < (numTrainPres + numTestPres) & numAbs < (numTrainAbs + numTestAbs)) {
 
 				sites <- enmSdm::sampleRast(x=mask, n=n, adjArea=FALSE, replace=TRUE, prob=FALSE)
 				prOcc <- raster::extract(speciesMap, sites)
 				presAbs <- stats::runif(nrow(sites)) <= prOcc
+				numPres <- sum(presAbs)
+				numAbs <- sum(!presAbs)
 
-				n <- 1.5 * n
+				n <- round(1.5 * n)
 
 			}
-
-			# training/test presences and absences
+			
+			# training/test presence/absence sites
 			allPresSites <- sites[which(presAbs), ]
 			trainPresSites <- allPresSites[1:numTrainPres, ]
 			testPresSites <- allPresSites[(numTrainPres + 1):(numTrainPres + numTestPres), ]
-			testAbsSites <- sites[which(!presAbs), ]
-			testAbsSites <- testAbsSites[sample(1:nrow(testAbsSites), numTestPres), ]
-
+			
+			allAbsSites <- sites[which(!presAbs), ]
+			trainAbsSites <- allAbsSites[1:numTrainAbs, ]
+			testAbsSites <- allAbsSites[(numTrainAbs + 1):(numTrainAbs + numTestAbs), ]
+			
+			# training/test presences/absence environmental data
 			trainPres <- as.data.frame(raster::extract(landscapeResampled, trainPresSites))
+			trainAbs <- as.data.frame(raster::extract(landscapeResampled, trainAbsSites))
 			testPres <- as.data.frame(raster::extract(landscapeResampled, testPresSites))
 			testAbs <- as.data.frame(raster::extract(landscapeResampled, testAbsSites))
-
+			
 			# training/test random background sites
 			trainBgSites <- enmSdm::sampleRast(x=mask, n=numBg, adjArea=FALSE, replace=TRUE, prob=FALSE)
 			trainBgEnv <- as.data.frame(raster::extract(landscapeResampled, trainBgSites))
 
 			# compile training data
+			trainPresAbs <- data.frame(presBg=c(rep(1, nrow(trainPres)), rep(0, nrow(trainAbs))))
+			trainDataPresAbs <- cbind(trainPresAbs, rbind(trainPres, trainAbs))
+
 			trainPresBg <- data.frame(presBg=c(rep(1, nrow(trainPres)), rep(0, nrow(trainBgEnv))))
-			trainData <- cbind(trainPresBg, rbind(trainPres, trainBgEnv))
+			trainDataPresBg <- cbind(trainPresBg, rbind(trainPres, trainBgEnv))
 
 			# compile test data
 			testBgSites <- enmSdm::sampleRast(x=mask, n=numBg, adjArea=FALSE, replace=TRUE, prob=FALSE)
@@ -177,13 +200,15 @@ print('here-inf')
 			# remember
 			sim <- list()
 			sim$iter <- iter
-			sim$seed <- seed
 
 			stats <- data.frame(
+				functionalResponse = attributes(response)$equationType,
 				numTrainPres=numTrainPres,
+				numTrainAbs=numTrainAbs,
 				numTestPres=numTestPres,
+				numTestAbs=numTestAbs,
 				numBg=numBg,
-				prev=prev,
+				prevalence=prev,
 				circle=circle,
 				sizeNative=sizeNative,
 				sizeResampled=sizeResampled,
@@ -199,7 +224,8 @@ print('here-inf')
 			sim$response <- response
 			sim$vars <- names(landscapeNative)
 			sim$geography <- geography
-			sim$trainData <- trainData
+			sim$trainDataPresAbs <- trainDataPresAbs
+			sim$trainDataPresBg <- trainDataPresBg
 			sim$testData <- list()
 			sim$testData$testPres <- testPres
 			sim$testData$testAbs <- testAbs
@@ -208,13 +234,13 @@ print('here-inf')
 			class(sim) <- c('sim', class(sim))
 
 			omnibus::dirCreate(simDir)
-			save(sim, file=paste0(simDir, '/', filePrependEndSpace, 'sim ', omnibus::prefix(iter, 3), '.Rdata'))
+			save(sim, file=paste0(simDir, '/', filePrependEndSpace, 'sim ', omnibus::prefix(iter, 4), '.RData'))
 			gc()
 
 		} # re-create data?
-
+		
 	} # next simulation
 
-	omnibus::say('')
+	if (verbose > 0) omnibus::say('\U2713')
 
 }
