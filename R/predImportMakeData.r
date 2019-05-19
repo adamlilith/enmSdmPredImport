@@ -202,12 +202,13 @@ predImportMakeData <- function(
 			sim$iter <- iter
 
 			stats <- data.frame(
+				functionalResponse = attributes(response)$equationType,
 				numTrainPres=numTrainPres,
 				numTrainAbs=numTrainAbs,
 				numTestPres=numTestPres,
 				numTestAbs=numTestAbs,
 				numBg=numBg,
-				prev=prev,
+				prevalence=prev,
 				circle=circle,
 				sizeNative=sizeNative,
 				sizeResampled=sizeResampled,

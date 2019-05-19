@@ -96,13 +96,7 @@ predImportEval <- function(
 					iter = sim$iter,
 					algo = algo,
 					perms = perms,
-					trainDataType = 'presence/background',
-					functionalResponse = attributes(sim$response)$equationType,
-					numTrainPres = sim$stats$numTrainPres,
-					numTrainAbs = sim$stats$numTrainAbs,
-					numTestPres = sim$stats$numTestPres,
-					numTestAbs = sim$stats$numTestAbs,
-					numTestBg = sim$stats$numBg
+					trainDataType = 'presence/background'
 				)
 				
 				thisPerform <- cbind(thisPerform, sim$stats)
