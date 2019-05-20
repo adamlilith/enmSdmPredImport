@@ -31,7 +31,7 @@ iaImport <- compiler::cmpfun(function(
 	testContrast,
 	predPres=NULL,
 	predContrast=NULL,
-	b0=NA, b1=NA, b2=NA, b11=NA, b12=NA, mu1=NA, mu2=mu2, sigma1=NA, sigma2=NA, rho=NA,
+	b0=NA, b1=NA, b2=NA, b11=NA, b12=NA, mu1=NA, mu2=NA, sigma1=NA, sigma2=NA, rho=NA,
 	...
 ) {
 
@@ -43,12 +43,14 @@ iaImport <- compiler::cmpfun(function(
 	###################################################
 
 	# by FIRST VARIABLE
-	for (countVar1 in seq_along(vars)[-length(vars)]) {
+	seq1 <- seq_along(vars)[-length(vars)]
+	for (countVar1 in seq1) {
 	
 		var1 <- vars[countVar1]
 
 		# by SECOND VARIABLE
-		for (countVar2 in (countVar1 + 1):length(vars)) {
+		seq2 <- (countVar1 + 1):length(vars)
+		for (countVar2 in seq2) {
 		
 			var2 <- vars[countVar2]
 		

@@ -34,7 +34,7 @@ predictModel <- function(model, data, ...) {
 
 		### reduced model
 		} else if (attr(model, 'modelType')=='reduced') {
-		
+
 			if (grepl(attr(model, 'reducedSans'), pattern='T1')) {
 				
 				model(
@@ -63,7 +63,7 @@ predictModel <- function(model, data, ...) {
 		
 		### univariate model
 		} else if (attr(model, 'modelType') == 'univariate') {
-		
+
 			if (grepl(attr(model, 'univarWith'), pattern='T1')) {
 				
 				model(
@@ -71,7 +71,7 @@ predictModel <- function(model, data, ...) {
 					x2=rep(0, nrow(data)),
 					...
 				)
-				
+
 			} else if (grepl(attr(model, 'univarWith'), pattern='T2')) {
 
 				model(
@@ -135,6 +135,19 @@ predictModel <- function(model, data, ...) {
 	
 	### generic
 	###########
+	} else if ('randomForest' %in% modelClass) {
+
+		predict(
+			model,
+			data,
+			type='prob',
+			response=TRUE,
+			na.rm=TRUE,
+			...
+		)
+
+	### generic
+	###########
 	} else {
 	
 		predict(
@@ -149,7 +162,7 @@ predictModel <- function(model, data, ...) {
 	
 	}
 
-	if ('randomForest' %in% modelClass) pred <- pred[ , 2]
+	if ('randomForest' %in% modelClass) pred <- pred[ , '1']
 	pred
 	
 }
