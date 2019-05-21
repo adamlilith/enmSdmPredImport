@@ -26,7 +26,7 @@ predictOmniscientPermIa <- compiler::cmpfun(function(
 	sim,
 	permProd=TRUE,
 	permProdRule=NULL,
-	b0=NA, b1=NA, b2=NA, b11=NA, b12=NA, mu1=NA, mu2=mu2, sigma1=NA, sigma2=NA, rho=NA,
+	b0=NA, b1=NA, b2=NA, b11=NA, b12=NA, mu1=NA, mu2=NA, sigma1=NA, sigma2=NA, rho=NA,
 	...
 ) {
 
