@@ -4,11 +4,21 @@
 \alias{predImportEval}
 \title{Evaluate predictor importance of models trained on simulated data}
 \usage{
-predImportEval(simDir, modelDir, evalDir, algos = c("omniscient",
-  "bioclim", "brt", "gam", "glm", "maxent", "maxnet", "rf"),
-  type = c("multivariate", "reduced", "univariate"), iters = 1:100,
-  perms = 30L, ia = TRUE, overwrite = FALSE, fileFlag = NULL,
-  userdata = NULL, verbose = 1, ...)
+predImportEval(
+  simDir,
+  modelDir,
+  evalDir,
+  algos = c("omniscient", "bioclim", "brt", "gam", "glm", "maxent", "maxnet", "rf"),
+  type = c("multivariate", "reduced", "univariate"),
+  iters = 1:100,
+  perms = 30L,
+  ia = TRUE,
+  overwrite = FALSE,
+  fileFlag = NULL,
+  userdata = NULL,
+  verbose = 1,
+  ...
+)
 }
 \arguments{
 \item{simDir}{Character, path name of directory in which scenario data files are saved.}

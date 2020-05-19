@@ -4,8 +4,7 @@
 \alias{gaussian}
 \title{Standardized bivariate Gaussian function}
 \usage{
-gaussian(x1, x2 = 0, mu1 = 0, mu2 = 0, sigma1 = 1, sigma2 = 0,
-  rho = 0, ...)
+gaussian(x1, x2 = 0, mu1 = 0, mu2 = 0, sigma1 = 1, sigma2 = 0, rho = 0, ...)
 }
 \arguments{
 \item{x1}{Numeric, values of the first variable.}

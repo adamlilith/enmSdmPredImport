@@ -4,10 +4,24 @@
 \alias{predictOmniscientPermIa}
 \title{Predictions for OMNISCIENT model using permuted interaction terms}
 \usage{
-predictOmniscientPermIa(model, data, sim, permProd = TRUE,
-  permProdRule = NULL, b0 = NA, b1 = NA, b2 = NA, b11 = NA,
-  b12 = NA, mu1 = NA, mu2 = NA, sigma1 = NA, sigma2 = NA,
-  rho = NA, ...)
+predictOmniscientPermIa(
+  model,
+  data,
+  sim,
+  permProd = TRUE,
+  permProdRule = NULL,
+  b0 = NA,
+  b1 = NA,
+  b2 = NA,
+  b11 = NA,
+  b12 = NA,
+  mu1 = NA,
+  mu2 = NA,
+  sigma1 = NA,
+  sigma2 = NA,
+  rho = NA,
+  ...
+)
 }
 \arguments{
 \item{model}{Omniscient model object (of class "function") representing a bivariate \code{\link[enmSdmPredImport]{logistic}} or bivariate \code{\link[enmSdmPredImport]{gaussian}} function.}
