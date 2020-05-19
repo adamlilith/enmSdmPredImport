@@ -14,7 +14,6 @@ Description: This package is designed to assess how well commonly-
     test which is always correct. It is provided as companion code
     to Smith & Santos YYYY PAPER TITLE JOURNAL VOL:PAGES.
 License: GPL (>=3) + file LICENSE
-Encoding: UTF-8
 LazyData: true
 URL: http://www.earthSkySea.org
 Depends:
@@ -34,4 +33,5 @@ Imports:
 	stats,
 	statisfactory
 Suggests: 
-RoxygenNote: 6.1.1
+Encoding: UTF-8
+RoxygenNote: 7.1.0

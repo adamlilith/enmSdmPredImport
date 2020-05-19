@@ -4,13 +4,35 @@
 \alias{predImportMakeData}
 \title{Master function to create common sets of data for simulations}
 \usage{
-predImportMakeData(geography, response, simDir, numTrainPres = 200,
-  numTrainAbs = 200, numTestPres = 200, numTestAbs = 200,
-  numBg = 10000, iters = 1:100, circle = FALSE, sizeNative = 1024,
-  sizeResampled = NULL, fileFlag = NULL, userdata = NULL, b0 = NA,
-  b1 = NA, b2 = NA, b11 = NA, b12 = NA, mu1 = NA, mu2 = mu2,
-  sigma1 = NA, sigma2 = NA, rho = NA, overwrite = FALSE,
-  verbose = 1, ...)
+predImportMakeData(
+  geography,
+  response,
+  simDir,
+  numTrainPres = 200,
+  numTrainAbs = 200,
+  numTestPres = 200,
+  numTestAbs = 200,
+  numBg = 10000,
+  iters = 1:100,
+  circle = FALSE,
+  sizeNative = 1024,
+  sizeResampled = NULL,
+  fileFlag = NULL,
+  userdata = NULL,
+  b0 = NA,
+  b1 = NA,
+  b2 = NA,
+  b11 = NA,
+  b12 = NA,
+  mu1 = NA,
+  mu2 = mu2,
+  sigma1 = NA,
+  sigma2 = NA,
+  rho = NA,
+  overwrite = FALSE,
+  verbose = 1,
+  ...
+)
 }
 \arguments{
 \item{geography}{A list of lists describing the simulated environmental layers.  Each sublist pertains to one later. See \code{\link[enmSdmPredImport]{genesis}} for details.}

@@ -4,11 +4,20 @@
 \alias{predImportTrainModels}
 \title{Train SDMs across multiple iterations of a scenario}
 \usage{
-predImportTrainModels(simDir, modelDir, vars, algos = c("omniscient",
-  "bioclim", "brt", "gam", "glm", "maxent", "maxnet", "rf"),
-  type = c("multivariate", "reduced", "univariate"), iters = 1:100,
-  numBg = NULL, fileFlag = NULL, overwrite = FALSE,
-  tempDir = raster::rasterOptions()$tmpdir, verbose = 1, ...)
+predImportTrainModels(
+  simDir,
+  modelDir,
+  vars,
+  algos = c("omniscient", "bioclim", "brt", "gam", "glm", "maxent", "maxnet", "rf"),
+  type = c("multivariate", "reduced", "univariate"),
+  iters = 1:100,
+  numBg = NULL,
+  fileFlag = NULL,
+  overwrite = FALSE,
+  tempDir = raster::rasterOptions()$tmpdir,
+  verbose = 1,
+  ...
+)
 }
 \arguments{
 \item{simDir}{Character, path name of directory in which scenario data files are saved.}

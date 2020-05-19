@@ -4,10 +4,27 @@
 \alias{iaImport}
 \title{Test importance of interaction terms in Maxent or omniscient model}
 \usage{
-iaImport(model, vars, sim, perms, testPres, testContrast,
-  predPres = NULL, predContrast = NULL, b0 = NA, b1 = NA,
-  b2 = NA, b11 = NA, b12 = NA, mu1 = NA, mu2 = NA, sigma1 = NA,
-  sigma2 = NA, rho = NA, ...)
+iaImport(
+  model,
+  vars,
+  sim,
+  perms,
+  testPres,
+  testContrast,
+  predPres = NULL,
+  predContrast = NULL,
+  b0 = NA,
+  b1 = NA,
+  b2 = NA,
+  b11 = NA,
+  b12 = NA,
+  mu1 = NA,
+  mu2 = NA,
+  sigma1 = NA,
+  sigma2 = NA,
+  rho = NA,
+  ...
+)
 }
 \arguments{
 \item{model}{Either a MaxEnt object or function object.}

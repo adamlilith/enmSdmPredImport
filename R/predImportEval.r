@@ -494,8 +494,8 @@ predImportEval <- function(
 						if (class(model[[countVar]]) != 'logical') {
 
 							# compute observed predictions
-							predPres <- predictModel(model[[countVar]], testPres, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
-							predAbs <- predictModel(model[[countVar]], testAbs, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
+							predPres <- enmSdmPredImport::predictModel(model[[countVar]], testPres, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
+							predAbs <- enmSdmPredImport::predictModel(model[[countVar]], testAbs, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
 							predBg <- predictModel(model[[countVar]], testBg, b0=b0, b1=b1, b2=b2, b11=b11, b12=b12, mu1=mu1, mu2=mu2, sigma1=sigma1, sigma2=sigma2, rho=rho)
 
 							# OBSERVED PERFORMANCE
