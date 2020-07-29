@@ -22,7 +22,7 @@ To install this package and dependencies you will need the packages (from CRAN) 
 `remotes::install_github('adamlilith/statisfactory')`  
 `remotes::install_github('adamlilith/legendary')`  
 `remotes::install_github('adamlilith/enmSdm')`  
-`remotes::install_github('adamlilith/enmSdmPredImport')
+`remotes::install_github('adamlilith/enmSdmPredImport')`
 
 Note that if you have issues installing any of the latter packages (e.g., because of using an earlier/later version of R), you can download the ZIP file of the package from the `zipTarFiles` directory in each of these packages. You can then install manually in R from this file.
 
