@@ -18,15 +18,20 @@ All other functions in the package are called by the three main functions, but c
 ## Installation ##
 To install this package and dependencies you will need the packages (from CRAN) `sp`, `raster`, `gbm`, `dismo`, and `rJava`. You will also need to install dependences from GitHub:
 
-`remotes::install_github('adamlilith/omnibus')`  
-`remotes::install_github('adamlilith/statisfactory')`  
-`remotes::install_github('adamlilith/legendary')`  
-`remotes::install_github('adamlilith/enmSdm')`  
-`remotes::install_github('adamlilith/enmSdmPredImport')`
+`# install.packages('remotes') # only if you don't have "remotes" installed already!`  
+`remotes::install_github('adamlilith/omnibus, dependencies=TRUE')`  
+`remotes::install_github('adamlilith/statisfactory, dependencies=TRUE')`  
+`remotes::install_github('adamlilith/legendary, dependencies=TRUE')`  
+`remotes::install_github('adamlilith/enmSdm, dependencies=TRUE')`  
+`remotes::install_github('adamlilith/enmSdmPredImport, dependencies=TRUE')`
 
 Note that if you have issues installing any of the latter packages (e.g., because of using an earlier/later version of R), you can download the ZIP file of the package from the `zipTarFiles` directory in each of these packages. You can then install manually in R from this file.
 
 Use of the model algorithm `maxent` requires copying a Java file into the "java" directory of the library of your `dismo` installation. You can obtain a copy of this file from https://biodiversityinformatics.amnh.org/open_source/maxent/.
 
-Last updated 2020-07-29
+This package was first used in Smith, A.B. and Santos, M.J.  In press. Testing the ability of species distribution models to infer variable importance. *Ecography* https://doi.org/10.1111/ecog.05317
+
+Abstract: Models of species’ distributions and niches are frequently used to infer the importance of range‐ and niche‐defining variables. However, the degree to which these models can reliably identify important variables and quantify their influence remains unknown. Here we use a series of simulations to explore how well models can 1) discriminate between variables with different influence and 2) calibrate the magnitude of influence relative to an ‘omniscient’ model. To quantify variable importance, we trained generalized additive models (GAMs), Maxent and boosted regression trees (BRTs) on simulated data and tested their sensitivity to permutations in each predictor. Importance was inferred by calculating the correlation between permuted and unpermuted predictions, and by comparing predictive accuracy of permuted and unpermuted predictions using AUC and the continuous Boyce index. In scenarios with one influential and one uninfluential variable, models failed to discriminate reliably between variables when training occurrences were < 8–64, prevalence was > 0.5, spatial extent was small, environmental data had coarse resolution and spatial autocorrelation was low, or when pairwise correlation between environmental variables was |r| > 0.7. When two variables influenced the distribution equally, importance was underestimated when species had narrow or intermediate niche breadth. Interactions between variables in how they shaped the niche did not affect inferences about their importance. When variables acted unequally, the effect of the stronger variable was overestimated. GAMs and Maxent discriminated between variables more reliably than BRTs, but no algorithm was consistently well‐calibrated vis‐à‐vis the omniscient model. Algorithm‐specific measures of importance like Maxent's change‐in‐gain metric were less robust than the permutation test. Overall, high predictive accuracy did not connote robust inferential capacity. As a result, requirements for reliably measuring variable importance are likely more stringent than for creating models with high predictive accuracy.
+
+Last updated 2020-10-09
 Adam B. Smith
