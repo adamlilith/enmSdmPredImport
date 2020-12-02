@@ -81,11 +81,11 @@
 #' set.seed(123)
 #' geog3 <- list(
 #' 	control=list(type='linear', min=-1, max=1),
-#' 	noisy=list(type='linear', min=-1, max=1, noisy=TRUE),
+#' 	noisy=list(type='linear', min=-1, max=1, noise=0.3),
 #' 	split=list(type='linear', min=-1, max=1, split=TRUE),
 #' 	randOrient=list(type='linear', min=-1, max=1, randOrient=TRUE),
-#' 	all=list(type='linear', min=-1, max=1, noisy=TRUE, split=TRUE,
-#' 		randOrient=TRUE)
+#' 	fancy=list(type='sine', min=-1, max=1, freq=0.2, offset=0, noise=0.3,
+#'  split=TRUE, randOrient=TRUE)
 #' )
 #' land <- genesis(geog3, size=201)
 #' raster::plot(land)
