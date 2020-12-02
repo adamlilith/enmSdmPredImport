@@ -1,6 +1,6 @@
 # enmSdmPredImport
 
-The `enmSdmPredImport` package for the R Statistical Environment enables the creation of virtual species for assessing the inferential power of species distribution models. The package is used in Smith, A.B. and Santos, M.J. 2020. Testing the ability of species distribution models to infer variable importance. *Ecography* 43:1801-1813. That manuscript uses thus package and scripts in the GitHub repository https://github.com/adamlilith/enmSdmPredImport_scenarios. Those scripts provide the best illustrations on how to use this package.
+The `enmSdmPredImport` package for the R Statistical Environment enables the creation of virtual species for assessing the inferential power of species distribution models. The package is used in Smith, A.B. and Santos, M.J. 2020. Testing the ability of species distribution models to infer variable importance. *Ecography* 43:1801-1813. That manuscript uses this package and scripts in the GitHub repository https://github.com/adamlilith/enmSdmPredImport_scenarios. Those scripts provide the best illustrations on how to use this package.
 
 ## Use ##
 The package has three main functions which are called in sequence:
